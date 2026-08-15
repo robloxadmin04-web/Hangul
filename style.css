@@ -886,6 +886,11 @@ ul { list-style: none; }
   background: var(--surface-2);
   border-color: var(--text-dim);
 }
+.btn-check:disabled, .btn-next:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
 .btn-next {
   background: var(--surface-2);
   border-color: var(--accent);
@@ -1527,6 +1532,16 @@ body.rom-off .rom-text {
   .topik-filter-row { gap: 6px; }
   .topik-filter-btn { font-size: 11.5px; padding: 7px 10px; }
   .practice-mode-tabs { gap: 6px; }
+
+  /* --- K-drama roleplay dialogue --- */
+  .kdrama-submode-tabs { flex-wrap: wrap; }
+  .kdrama-submode-btn { flex: 1 1 auto; text-align: center; }
+  .kdrama-line-kr { font-size: 15px; }
+  .kdrama-controls { flex-direction: column; }
+  .kdrama-controls .btn-check { width: 100%; text-align: center; }
+  .kdrama-scenario-nav { flex-direction: column; }
+  .kdrama-scenario-nav .btn-check { width: 100%; text-align: center; }
+  .kdrama-helpers { grid-template-columns: 1fr; }
 }
 
 /* --- MOBILE NAV --------------------------------------------- */
@@ -1698,6 +1713,97 @@ body.rom-off .rom-text {
 .conversation-kr { font-family: var(--kr-font); font-size: 15px; color: var(--text); margin-left: 4px; }
 .conversation-en { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
 .conversation-choice { display: block; width: 100%; text-align: left; margin-bottom: 8px; }
+
+/* --- K-DRAMA ROLEPLAY DIALOGUE (sub-mode of Conversation practice) --- */
+.kdrama-submode-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+.kdrama-submode-btn {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  padding: 8px 14px;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.kdrama-submode-btn:hover { color: var(--text); }
+.kdrama-submode-btn.active {
+  color: var(--text);
+  background: var(--surface-2);
+  border-color: var(--text-dim);
+}
+.kdrama-title-en { font-size: 11.5px; color: var(--text-dim); font-weight: 400; }
+.kdrama-speech-level {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border-left: 2px solid var(--accent);
+  padding: 8px 12px;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+.kdrama-speech-level strong { color: var(--text); }
+.kdrama-transcript { margin-bottom: 16px; }
+.kdrama-line {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  opacity: 0.55;
+}
+.kdrama-line-active {
+  opacity: 1;
+  border-color: var(--border-light);
+  background: var(--surface-2);
+}
+.kdrama-line-learner { border-left: 2px solid var(--accent); }
+.kdrama-line-speaker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.kdrama-line-kr {
+  font-family: var(--kr-font);
+  font-size: 16px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.kdrama-listen { flex-shrink: 0; }
+.kdrama-line-rom { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+.kdrama-translate-btn {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  padding: 5px 10px;
+}
+.kdrama-translate-btn:hover { color: var(--text); }
+.kdrama-line-en { font-size: 13px; color: var(--text-dim); margin-top: 8px; }
+.kdrama-progress { font-size: 11.5px; color: var(--text-dim); letter-spacing: 0.04em; margin-bottom: 14px; }
+.kdrama-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.kdrama-helpers { margin-bottom: 20px; }
+.kdrama-vocab-kr { font-family: var(--kr-font); color: var(--text); }
+.kdrama-scenario-nav {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
 
 /* --- DEBATE / OPINION (extends Practice section) ------------------- */
 .debate-topic-kr { font-family: var(--kr-font); font-size: 17px; color: var(--text); margin-bottom: 6px; }
