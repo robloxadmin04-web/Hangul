@@ -1189,7 +1189,11 @@ function loadPractice() {
   else if (practiceMode === 'translation' && typeof renderTranslationQuiz === 'function') renderTranslationQuiz(area);
   else if (practiceMode === 'free-writing' && typeof renderFreeWritingQuiz === 'function') renderFreeWritingQuiz(area);
   else if (practiceMode === 'dictation' && typeof renderDictationQuiz === 'function') renderDictationQuiz(area);
-  else if (practiceMode === 'conversation' && typeof renderConversationPractice === 'function') renderConversationPractice(area);
+  else if (practiceMode === 'conversation' && typeof renderConversationPractice === 'function') {
+    initConversationSubTabs(area);
+    if (conversationSubMode === 'roleplay' && typeof renderKdramaRoleplay === 'function') renderKdramaRoleplay(area);
+    else renderConversationPractice(area);
+  }
   else if (practiceMode === 'debate' && typeof renderDebatePractice === 'function') renderDebatePractice(area);
 }
 
@@ -1309,6 +1313,406 @@ const CONVERSATION_SCENARIOS = [
 ];
 
 let conversationIdx = 0;
+let conversationSubMode = 'quick'; /* 'quick' = existing MC practice, 'roleplay' = new K-drama dialogue mode */
+
+/* ============================================================
+   K-DRAMA STYLE ROLEPLAY DIALOGUES — an additional mode inside
+   the EXISTING Conversation practice tab (not a new Practice
+   system). All dialogue below is original, written for this
+   project — not transcribed from any TV show or script.
+   Progress uses the existing trackExposure()/appState.exposure
+   architecture; there is no separate roleplay state object.
+   ============================================================ */
+const KDRAMA_DIALOGUES = [
+  /* ---------------- BEGINNER ---------------- */
+  { id:'kd-cafe', title:'카페에서 주문하기', en:'Ordering at a Café', level:'Beginner',
+    situation:'You stop by a café on your way to class and order a drink.',
+    speechLevel:{ label:'해요체', note:'해요체 is used here — polite, everyday speech suitable for staff and strangers.' },
+    lines:[
+      { speaker:'직원', role:'other', kr:'어서 오세요. 뭐 드릴까요?', en:'Welcome. What can I get you?', rom:'eoseo oseyo. mwo deurilkkayo?' },
+      { speaker:'You', role:'learner', kr:'아메리카노 한 잔 주세요.', en:'One Americano, please.', rom:'amerikano han jan juseyo.' },
+      { speaker:'직원', role:'other', kr:'따뜻한 걸로 드릴까요, 아이스로 드릴까요?', en:'Would you like it hot or iced?', rom:'ttatteuthan geollo deurilkkayo, aiseuro deurilkkayo?' },
+      { speaker:'You', role:'learner', kr:'아이스로 주세요.', en:'Iced, please.', rom:'aiseuro juseyo.' },
+      { speaker:'직원', role:'other', kr:'네, 잠시만 기다려 주세요.', en:'Okay, please wait a moment.', rom:'ne, jamsiman gidaryeo juseyo.' },
+    ],
+    vocab:[ {kr:'한 잔', en:'one cup/glass'}, {kr:'따뜻하다', en:'to be warm/hot'}, {kr:'잠시만', en:'just a moment'} ],
+    grammar:['주세요 — "please give me," used to order or request something.', '(으)로 — marks a choice, here "hot or iced."'] },
+  { id:'kd-store', title:'편의점에서 쇼핑하기', en:'Shopping at a Convenience Store', level:'Beginner',
+    situation:'You are buying a few snacks at a late-night convenience store.',
+    speechLevel:{ label:'해요체', note:'해요체 — the everyday polite level used with store staff.' },
+    lines:[
+      { speaker:'직원', role:'other', kr:'봉투 필요하세요?', en:'Do you need a bag?', rom:'bongtu piryohaseyo?' },
+      { speaker:'You', role:'learner', kr:'아니요, 괜찮아요.', en:'No, that\'s okay.', rom:'aniyo, gwaenchanhayo.' },
+      { speaker:'직원', role:'other', kr:'포인트 카드 있으세요?', en:'Do you have a points card?', rom:'pointeu kadeu isseuseyo?' },
+      { speaker:'You', role:'learner', kr:'아니요, 없어요.', en:'No, I don\'t.', rom:'aniyo, eopseoyo.' },
+      { speaker:'직원', role:'other', kr:'전부 오천 원입니다.', en:'That\'s five thousand won total.', rom:'jeonbu ocheon woonimnida.' },
+    ],
+    vocab:[ {kr:'봉투', en:'bag'}, {kr:'포인트 카드', en:'points/loyalty card'}, {kr:'전부', en:'total, altogether'} ],
+    grammar:['괜찮아요 — a natural way to politely decline something.', '없어요 — "don\'t have," the negative of 있어요.'] },
+  { id:'kd-intro', title:'자기소개하기', en:'Introducing Yourself', level:'Beginner',
+    situation:'You are meeting a classmate for the first time before class.',
+    speechLevel:{ label:'해요체', note:'해요체 — safe, polite default when you don\'t know someone well yet.' },
+    lines:[
+      { speaker:'급우', role:'other', kr:'안녕하세요, 저는 지민이에요.', en:'Hello, I\'m Jimin.', rom:'annyeonghaseyo, jeoneun jimin-ieyo.' },
+      { speaker:'You', role:'learner', kr:'안녕하세요, 저는 [이름]이에요. 만나서 반가워요.', en:'Hello, I\'m [name]. Nice to meet you.', rom:'annyeonghaseyo, jeoneun [ireum]-ieyo. mannaseo bangawoyo.' },
+      { speaker:'급우', role:'other', kr:'어느 나라에서 왔어요?', en:'Where are you from?', rom:'eoneu narae-seo wasseoyo?' },
+      { speaker:'You', role:'learner', kr:'저는 [나라]에서 왔어요.', en:'I\'m from [country].', rom:'jeoneun [nara]e-seo wasseoyo.' },
+    ],
+    vocab:[ {kr:'만나서 반가워요', en:'nice to meet you'}, {kr:'나라', en:'country'}, {kr:'~에서 오다', en:'to come from ~'} ],
+    grammar:['~이에요/예요 — "to be," used to state your name.', '~에서 왔어요 — "(I) came from ~," for saying where you\'re from.'] },
+  { id:'kd-name', title:'이름 묻기', en:'Asking Someone\'s Name', level:'Beginner',
+    situation:'You want to politely ask a new acquaintance their name.',
+    speechLevel:{ label:'해요체', note:'해요체 — polite and appropriate when speaking to someone you\'ve just met.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'실례지만, 이름이 뭐예요?', en:'Excuse me, what\'s your name?', rom:'sillyejiman, ireum-i mwoyeyo?' },
+      { speaker:'상대방', role:'other', kr:'저는 하은이에요. 이름이 어떻게 되세요?', en:'I\'m Ha-eun. And what\'s your name?', rom:'jeoneun haeun-ieyo. ireum-i eotteoke doeseyo?' },
+      { speaker:'You', role:'learner', kr:'저는 [이름]이에요.', en:'I\'m [name].', rom:'jeoneun [ireum]-ieyo.' },
+    ],
+    vocab:[ {kr:'실례지만', en:'excuse me, but...'}, {kr:'이름이 어떻게 되세요?', en:'what is your name? (more polite)'} ],
+    grammar:['이름이 어떻게 되세요? is a more polite alternative to 이름이 뭐예요?.'] },
+  { id:'kd-food', title:'음식 주문하기', en:'Ordering Food', level:'Beginner',
+    situation:'You are at a small restaurant deciding what to order with a friend.',
+    speechLevel:{ label:'해요체 · 반말', note:'해요체 is used with the staff; 반말 is used between close friends of similar age.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'뭐 먹을래?', en:'What do you want to eat? (casual)', rom:'mwo meogeullae?' },
+      { speaker:'You', role:'learner', kr:'김치찌개 먹고 싶어.', en:'I want to eat kimchi stew. (casual)', rom:'gimchijjigae meokgo sipeo.' },
+      { speaker:'직원', role:'other', kr:'주문하시겠어요?', en:'Are you ready to order?', rom:'jumunhasigesseoyo?' },
+      { speaker:'You', role:'learner', kr:'김치찌개 두 개 주세요.', en:'Two kimchi stews, please.', rom:'gimchijjigae du gae juseyo.' },
+    ],
+    vocab:[ {kr:'먹고 싶다', en:'to want to eat'}, {kr:'주문하다', en:'to order'}, {kr:'두 개', en:'two (items)'} ],
+    grammar:['-고 싶다 — expresses "want to," e.g. 먹고 싶어요.', '반말 (-ㄹ래?) vs 해요체 (-시겠어요?) — notice the shift depending on who is speaking.'] },
+  { id:'kd-directions', title:'길 묻기', en:'Asking for Directions', level:'Beginner',
+    situation:'You are lost near the subway station and ask a stranger for help.',
+    speechLevel:{ label:'해요체', note:'해요체 — the standard polite level for asking strangers for help.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'저기요, 지하철역이 어디예요?', en:'Excuse me, where is the subway station?', rom:'jeogiyo, jihacheollyeogi eodiyeyo?' },
+      { speaker:'행인', role:'other', kr:'이 길로 쭉 가세요. 그럼 오른쪽에 있어요.', en:'Go straight this way. Then it\'s on your right.', rom:'i gillo jjuk gaseyo. geureom oreunjjoge isseoyo.' },
+      { speaker:'You', role:'learner', kr:'감사합니다.', en:'Thank you.', rom:'gamsahamnida.' },
+    ],
+    vocab:[ {kr:'저기요', en:'excuse me (getting attention)'}, {kr:'쭉 가다', en:'to go straight'}, {kr:'오른쪽', en:'right side'} ],
+    grammar:['쭉 가세요 — polite command form used for giving directions.', '그럼 — "then," connecting two steps of directions.'] },
+
+  /* ---------------- ELEMENTARY ---------------- */
+  { id:'kd-plans', title:'친구와 약속 잡기', en:'Making Plans with a Friend', level:'Elementary',
+    situation:'You are texting a friend to set up a weekend hangout.',
+    speechLevel:{ label:'반말', note:'반말 — used between close friends of a similar age; not appropriate with strangers or elders.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'이번 주말에 뭐 해?', en:'What are you doing this weekend?', rom:'ibeon jumare mwo hae?' },
+      { speaker:'You', role:'learner', kr:'아직 계획 없어. 왜?', en:'No plans yet. Why?', rom:'ajik gyehoek eopseo. wae?' },
+      { speaker:'친구', role:'other', kr:'같이 영화 볼래?', en:'Want to watch a movie together?', rom:'gachi yeonghwa bollae?' },
+      { speaker:'You', role:'learner', kr:'좋아, 토요일 어때?', en:'Sure, how about Saturday?', rom:'joha, toyoil eottae?' },
+    ],
+    vocab:[ {kr:'계획', en:'plan'}, {kr:'같이', en:'together'}, {kr:'어때?', en:'how about...?'} ],
+    grammar:['-ㄹ래? — casual way to suggest doing something together.', '어때? — "how about," used to propose a time or idea.'] },
+  { id:'kd-weekend', title:'주말 이야기하기', en:'Talking About the Weekend', level:'Elementary',
+    situation:'A coworker asks about your weekend on Monday morning.',
+    speechLevel:{ label:'해요체', note:'해요체 — polite, appropriate for coworkers you\'re not extremely close with.' },
+    lines:[
+      { speaker:'동료', role:'other', kr:'주말 잘 보냈어요?', en:'Did you have a good weekend?', rom:'jumal jal bonaesseoyo?' },
+      { speaker:'You', role:'learner', kr:'네, 집에서 좀 쉬었어요.', en:'Yes, I rested at home.', rom:'ne, jibeseo jom swieosseoyo.' },
+      { speaker:'동료', role:'other', kr:'아, 그랬어요? 저는 등산 갔다 왔어요.', en:'Oh, is that so? I went hiking.', rom:'a, geuraesseoyo? jeoneun deungsan gatda wasseoyo.' },
+      { speaker:'You', role:'learner', kr:'우와, 재미있었겠어요.', en:'Wow, that must have been fun.', rom:'uwa, jaemiisseotgesseoyo.' },
+    ],
+    vocab:[ {kr:'쉬다', en:'to rest'}, {kr:'등산 가다', en:'to go hiking'}, {kr:'재미있다', en:'to be fun'} ],
+    grammar:['-겠- — expresses guessing/inference, e.g. 재미있었겠어요 ("that must have been fun").'] },
+  { id:'kd-school', title:'학교 생활', en:'School Life', level:'Elementary',
+    situation:'A classmate asks about your class schedule between periods.',
+    speechLevel:{ label:'반말', note:'반말 — classmates of the same age commonly speak this way once they know each other.' },
+    lines:[
+      { speaker:'급우', role:'other', kr:'다음 수업 뭐야?', en:'What\'s the next class?', rom:'daeum sueop mwoya?' },
+      { speaker:'You', role:'learner', kr:'한국어 수업이야.', en:'It\'s Korean class.', rom:'hangugeo sueobiya.' },
+      { speaker:'급우', role:'other', kr:'오늘 숙제 있어?', en:'Is there homework today?', rom:'oneul sukje isseo?' },
+      { speaker:'You', role:'learner', kr:'응, 좀 많아.', en:'Yeah, quite a bit.', rom:'eung, jom mana.' },
+    ],
+    vocab:[ {kr:'수업', en:'class'}, {kr:'숙제', en:'homework'}, {kr:'많다', en:'to be a lot/many'} ],
+    grammar:['-이야/야 — the 반말 form of ~이에요/예요.'] },
+  { id:'kd-shopping2', title:'쇼핑하기', en:'Shopping', level:'Elementary',
+    situation:'You are trying on a jacket at a clothing store.',
+    speechLevel:{ label:'해요체', note:'해요체 — the standard polite level used with sales staff.' },
+    lines:[
+      { speaker:'직원', role:'other', kr:'어떤 사이즈 찾으세요?', en:'What size are you looking for?', rom:'eotteon saijeu chajeuseyo?' },
+      { speaker:'You', role:'learner', kr:'미디엄 사이즈 있어요?', en:'Do you have a medium?', rom:'midieom saijeu isseoyo?' },
+      { speaker:'직원', role:'other', kr:'네, 잠시만요. 이거 한번 입어 보세요.', en:'Yes, one moment. Try this one on.', rom:'ne, jamsimanyo. igeo hanbeon ibeo boseyo.' },
+      { speaker:'You', role:'learner', kr:'이거 얼마예요?', en:'How much is this?', rom:'igeo eolmayeyo?' },
+    ],
+    vocab:[ {kr:'사이즈', en:'size'}, {kr:'입어 보다', en:'to try on'}, {kr:'얼마예요?', en:'how much is it?'} ],
+    grammar:['-아/어 보다 — "to try doing," e.g. 입어 보다 (to try wearing/on).'] },
+  { id:'kd-transit', title:'대중교통 이용하기', en:'Using Public Transportation', level:'Elementary',
+    situation:'You are checking which bus to take with a stranger at a bus stop.',
+    speechLevel:{ label:'해요체', note:'해요체 — appropriate for asking a stranger for help.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'이 버스 시청 가요?', en:'Does this bus go to City Hall?', rom:'i beoseu sicheong gayo?' },
+      { speaker:'행인', role:'other', kr:'아니요, 저 버스를 타세요. 372번이에요.', en:'No, take that bus over there. It\'s number 372.', rom:'aniyo, jeo beoseureul taseyo. 372beonieyo.' },
+      { speaker:'You', role:'learner', kr:'감사합니다. 얼마나 걸려요?', en:'Thank you. How long does it take?', rom:'gamsahamnida. eolmana geollyeoyo?' },
+      { speaker:'행인', role:'other', kr:'한 20분쯤 걸려요.', en:'It takes about 20 minutes.', rom:'han isipbunjjeum geollyeoyo.' },
+    ],
+    vocab:[ {kr:'타다', en:'to ride/take (transport)'}, {kr:'걸리다', en:'to take (time)'}, {kr:'~쯤', en:'about, approximately'} ],
+    grammar:['얼마나 걸려요? — a common way to ask how long something takes.'] },
+  { id:'kd-phone', title:'전화하기', en:'Making a Phone Call', level:'Elementary',
+    situation:'You are calling a friend to check if they\'re free to talk.',
+    speechLevel:{ label:'반말', note:'반말 — natural between close friends on a casual phone call.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'여보세요, 지금 통화 괜찮아?', en:'Hello, is now an okay time to talk?', rom:'yeoboseyo, jigeum tonghwa gwaenchanha?' },
+      { speaker:'친구', role:'other', kr:'응, 괜찮아. 무슨 일이야?', en:'Yeah, it\'s fine. What\'s up?', rom:'eung, gwaenchanha. museun iriya?' },
+      { speaker:'You', role:'learner', kr:'내일 시간 있어? 같이 밥 먹자.', en:'Are you free tomorrow? Let\'s eat together.', rom:'naeil sigan isseo? gachi bap meokja.' },
+    ],
+    vocab:[ {kr:'여보세요', en:'hello (on the phone)'}, {kr:'통화', en:'phone call'}, {kr:'무슨 일이야?', en:'what\'s going on?'} ],
+    grammar:['-자 — casual "let\'s," e.g. 밥 먹자 (let\'s eat).'] },
+
+  /* ---------------- INTERMEDIATE ---------------- */
+  { id:'kd-reschedule', title:'약속 변경하기', en:'Changing Plans', level:'Intermediate',
+    situation:'Something came up and you need to reschedule a meetup.',
+    speechLevel:{ label:'해요체', note:'해요체 — polite but relaxed, common when texting an acquaintance about plans.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'미안한데, 오늘 약속을 다음 주로 미뤄도 될까요?', en:'Sorry, but could we push today\'s plan to next week?', rom:'mianhande, oneul yaksogeul daeum juro miryeodo doelkkayo?' },
+      { speaker:'상대방', role:'other', kr:'괜찮아요. 무슨 일 있어요?', en:'That\'s fine. Is something going on?', rom:'gwaenchanhayo. museun il isseoyo?' },
+      { speaker:'You', role:'learner', kr:'갑자기 회사에 일이 생겼어요.', en:'Something suddenly came up at work.', rom:'gapjagi hoesae iri saenggyeosseoyo.' },
+      { speaker:'상대방', role:'other', kr:'이해해요. 다음 주 화요일은 어때요?', en:'I understand. How about next Tuesday?', rom:'ihaehaeyo. daeum ju hwayoireun eottaeyo?' },
+    ],
+    vocab:[ {kr:'미루다', en:'to postpone'}, {kr:'갑자기', en:'suddenly'}, {kr:'이해하다', en:'to understand'} ],
+    grammar:['-아/어도 될까요? — polite way to ask permission, "would it be okay if...?"', '-게 되다 / 생기다 — describing something that came up unexpectedly.'] },
+  { id:'kd-problem', title:'문제 설명하기', en:'Explaining a Problem', level:'Intermediate',
+    situation:'You explain to a landlord that something in your apartment is broken.',
+    speechLevel:{ label:'해요체', note:'해요체 — the appropriate level when explaining an issue to someone like a landlord.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'저기, 화장실 물이 안 나와요.', en:'Excuse me, there\'s no water in the bathroom.', rom:'jeogi, hwajangsil muri an nawayo.' },
+      { speaker:'집주인', role:'other', kr:'언제부터 그랬어요?', en:'Since when has it been like that?', rom:'eonjebuteo geuraesseoyo?' },
+      { speaker:'You', role:'learner', kr:'어제 저녁부터 그런 것 같아요.', en:'I think it\'s been like that since yesterday evening.', rom:'eoje jeonyeokbuteo geureon geot gatayo.' },
+      { speaker:'집주인', role:'other', kr:'알겠어요, 사람을 보낼게요.', en:'Okay, I\'ll send someone.', rom:'algesseoyo, sarameul bonaelgeyo.' },
+    ],
+    vocab:[ {kr:'화장실', en:'bathroom'}, {kr:'~부터', en:'starting from ~'}, {kr:'보내다', en:'to send'} ],
+    grammar:['-ㄴ/는 것 같다 — softens a statement into "it seems like."', '-ㄹ게요 — states an intention/promise, "I\'ll..."'] },
+  { id:'kd-request2', title:'부탁하기', en:'Making a Request', level:'Intermediate',
+    situation:'You need a coworker to cover part of your shift.',
+    speechLevel:{ label:'해요체', note:'해요체 — polite but not overly formal, typical between coworkers.' },
+    lines:[
+      { speaker:'You', role:'learner', kr:'혹시 내일 제 대신 좀 도와줄 수 있어요?', en:'Could you possibly help cover for me tomorrow?', rom:'hoksi naeil je daesin jom dowajul su isseoyo?' },
+      { speaker:'동료', role:'other', kr:'무슨 일인데요?', en:'What\'s going on?', rom:'museun irindeyo?' },
+      { speaker:'You', role:'learner', kr:'병원에 갈 일이 생겨서요.', en:'Something came up and I need to go to the hospital.', rom:'byeongwone gal iri saenggyeoseoyo.' },
+      { speaker:'동료', role:'other', kr:'아, 그럼 제가 해 드릴게요.', en:'Oh, then I\'ll take care of it for you.', rom:'a, geureom jega hae deurilgeyo.' },
+    ],
+    vocab:[ {kr:'혹시', en:'possibly, by any chance'}, {kr:'~대신', en:'instead of ~'}, {kr:'생기다', en:'to come up, arise'} ],
+    grammar:['-아/어 줄 수 있어요? — polite request, "could you...for me?"', '-아/어 드릴게요 — humble form offering to do something for someone.'] },
+  { id:'kd-opinion', title:'의견 말하기', en:'Giving an Opinion', level:'Intermediate',
+    situation:'A friend asks what you think about a new café that just opened.',
+    speechLevel:{ label:'해요체', note:'해요체 — comfortable, everyday polite speech among acquaintances.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'새로 생긴 카페 가 봤어요? 어때요?', en:'Have you been to the new café? What do you think?', rom:'saero saenggin kape ga bwasseoyo? eottaeyo?' },
+      { speaker:'You', role:'learner', kr:'분위기는 좋은데, 좀 비싼 것 같아요.', en:'The atmosphere is nice, but I think it\'s a bit pricey.', rom:'bunwigineun joheunde, jom bissan geot gatayo.' },
+      { speaker:'친구', role:'other', kr:'맞아요, 저도 그렇게 생각했어요.', en:'Right, I thought so too.', rom:'majayo, jeodo geureoke saenggakaesseoyo.' },
+    ],
+    vocab:[ {kr:'분위기', en:'atmosphere, mood'}, {kr:'비싸다', en:'to be expensive'}, {kr:'그렇게 생각하다', en:'to think so'} ],
+    grammar:['-는데 — connects two related ideas with a light contrast, "...but."', '-ㄴ/는 것 같아요 — softens an opinion, very common in natural speech.'] },
+  { id:'kd-travel', title:'여행 계획 이야기하기', en:'Talking About Travel Plans', level:'Intermediate',
+    situation:'You are discussing an upcoming trip with a friend.',
+    speechLevel:{ label:'반말', note:'반말 — close friends planning a trip together typically speak casually.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'이번 여행 어디로 갈지 정했어?', en:'Have you decided where we\'re going on this trip?', rom:'ibeon yeohaeng eodiro galji jeonghaesseo?' },
+      { speaker:'You', role:'learner', kr:'아직 못 정했어. 부산은 어때?', en:'Not yet. How about Busan?', rom:'ajik mot jeonghaesseo. busaneun eottae?' },
+      { speaker:'친구', role:'other', kr:'좋아! 바다도 보고 회도 먹자.', en:'Sounds good! Let\'s see the sea and eat raw fish too.', rom:'joha! badado bogo hoedo meokja.' },
+    ],
+    vocab:[ {kr:'정하다', en:'to decide'}, {kr:'바다', en:'sea, ocean'}, {kr:'회', en:'raw fish (sashimi)'} ],
+    grammar:['-ㄹ지 정하다 — "to decide whether/where to...", used for planning.'] },
+  { id:'kd-worklife', title:'직장 생활 이야기하기', en:'Talking About Work Life', level:'Intermediate',
+    situation:'You catch up with a friend about how work has been going.',
+    speechLevel:{ label:'반말', note:'반말 — used between close friends catching up casually.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'요즘 회사 일은 어때?', en:'How\'s work been lately?', rom:'yojeum hoesa ireun eottae?' },
+      { speaker:'You', role:'learner', kr:'좀 바빠. 요즘 프로젝트가 많아서.', en:'Pretty busy. There\'s a lot of projects lately.', rom:'jom bappa. yojeum peurojekteuga manhaseo.' },
+      { speaker:'친구', role:'other', kr:'힘들겠다. 그래도 잘 챙겨 먹어.', en:'That sounds tough. Still, make sure to eat well.', rom:'himdeulgetda. geuraedo jal chaenggyeo meogeo.' },
+    ],
+    vocab:[ {kr:'바쁘다', en:'to be busy'}, {kr:'프로젝트', en:'project'}, {kr:'챙겨 먹다', en:'to make sure to eat'} ],
+    grammar:['-아/어서 — gives a reason, "because...".', '-겠다 — expresses sympathy/inference from what was just said.'] },
+
+  /* ---------------- ADVANCED ---------------- */
+  { id:'kd-interview', title:'면접', en:'Job Interview', level:'Advanced',
+    situation:'You are answering a question in a formal job interview.',
+    speechLevel:{ label:'합니다체', note:'합니다체 — the most formal speech level, expected in interviews and formal settings.' },
+    lines:[
+      { speaker:'면접관', role:'other', kr:'우리 회사에 지원하신 이유가 무엇입니까?', en:'What is your reason for applying to our company?', rom:'uri hoesae jiwonhasin iyuga mueosimnikka?' },
+      { speaker:'You', role:'learner', kr:'귀사의 성장 가능성을 보고 지원하게 되었습니다.', en:'I applied after seeing your company\'s growth potential.', rom:'gwisaui seongjang ganeungseongeul bogo jiwonhage doeeotseumnida.' },
+      { speaker:'면접관', role:'other', kr:'본인의 강점은 무엇이라고 생각하십니까?', en:'What do you think your strengths are?', rom:'boninui gangjeomeun mueosirago saenggakhasimnikka?' },
+      { speaker:'You', role:'learner', kr:'저는 문제 해결 능력이 뛰어나다고 생각합니다.', en:'I believe my problem-solving ability is strong.', rom:'jeoneun munje haegyeol neungnyeogi ttwieonadago saenggakhamnida.' },
+    ],
+    vocab:[ {kr:'지원하다', en:'to apply'}, {kr:'강점', en:'strength'}, {kr:'뛰어나다', en:'to be excellent/outstanding'} ],
+    grammar:['-습니다/ㅂ니다 — the formal sentence ending used throughout 합니다체.', '-다고 생각하다 — "to think that...", useful for stating opinions formally.'] },
+  { id:'kd-workplace', title:'직장 내 대화', en:'Workplace Conversation', level:'Advanced',
+    situation:'You are updating a manager on a project\'s status during a meeting.',
+    speechLevel:{ label:'합니다체', note:'합니다체 — standard for formal meetings and addressing superiors at work.' },
+    lines:[
+      { speaker:'상사', role:'other', kr:'프로젝트 진행 상황이 어떻게 됩니까?', en:'What\'s the status of the project?', rom:'peurojekteu jinhaeng sanghwangi eotteoke doemnikka?' },
+      { speaker:'You', role:'learner', kr:'현재 70% 정도 완료되었습니다.', en:'It\'s currently about 70% complete.', rom:'hyeonjae chilsip percent jeongdo wallyodoeeotseumnida.' },
+      { speaker:'상사', role:'other', kr:'예정된 일정에 문제는 없습니까?', en:'Is there any issue with the planned schedule?', rom:'yejeongdoen iljeonge munjeneun eopseumnikka?' },
+      { speaker:'You', role:'learner', kr:'네, 지금까지는 일정대로 진행되고 있습니다.', en:'Yes, it\'s proceeding on schedule so far.', rom:'ne, jigeumkkajineun iljeongdaero jinhaengdoego itseumnida.' },
+    ],
+    vocab:[ {kr:'진행 상황', en:'progress status'}, {kr:'완료되다', en:'to be completed'}, {kr:'일정대로', en:'according to schedule'} ],
+    grammar:['-습니까?/ㅂ니까? — the formal question ending, paired with 합니다체 statements.', '-대로 — "according to," e.g. 일정대로 (as scheduled).'] },
+  { id:'kd-conflict', title:'의견 충돌', en:'Disagreement', level:'Advanced',
+    situation:'Two coworkers disagree on how to approach a project.',
+    speechLevel:{ label:'해요체 · 합니다체', note:'A mix of 해요체 and 합니다체 is common in professional disagreements, depending on formality.' },
+    lines:[
+      { speaker:'동료', role:'other', kr:'저는 이 방식이 더 효율적이라고 생각해요.', en:'I think this method is more efficient.', rom:'jeoneun i bangsigi deo hyoyuljeogirago saenggakhaeyo.' },
+      { speaker:'You', role:'learner', kr:'말씀하신 점도 이해하지만, 저는 조금 다르게 생각해요.', en:'I understand your point, but I see it a bit differently.', rom:'malsseumhasin jeomdo ihaehajiman, jeoneun jogeum dareuge saenggakhaeyo.' },
+      { speaker:'동료', role:'other', kr:'구체적으로 어떤 부분이 걱정되세요?', en:'Specifically, what part are you concerned about?', rom:'guchejeogeuro eotteon buboni geokjeongdoeseyo?' },
+      { speaker:'You', role:'learner', kr:'시간이 너무 오래 걸릴 것 같아서요.', en:'I\'m concerned it might take too long.', rom:'sigani neomu orae geollil geot gataseoyo.' },
+    ],
+    vocab:[ {kr:'효율적', en:'efficient'}, {kr:'구체적으로', en:'specifically'}, {kr:'걱정되다', en:'to be worried'} ],
+    grammar:['-지만 — "but," used to soften disagreement politely.', '-것 같아서요 — hedges a concern rather than stating it bluntly.'] },
+  { id:'kd-social', title:'사회적인 주제', en:'Social Topics', level:'Advanced',
+    situation:'You are discussing a current social issue with a friend over coffee.',
+    speechLevel:{ label:'해요체', note:'해요체 — appropriate for a thoughtful but still casual discussion between acquaintances.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'요즘 재택근무에 대해 어떻게 생각해요?', en:'What do you think about remote work these days?', rom:'yojeum jaetaekgeunmue daehae eotteoke saenggakhaeyo?' },
+      { speaker:'You', role:'learner', kr:'장점도 있고 단점도 있는 것 같아요.', en:'I think it has both advantages and disadvantages.', rom:'jangjeomdo itgo danjeomdo inneun geot gatayo.' },
+      { speaker:'친구', role:'other', kr:'맞아요. 특히 소통 문제가 있는 것 같아요.', en:'Right. Communication issues especially seem to come up.', rom:'majayo. teukhi sotong munjega inneun geot gatayo.' },
+    ],
+    vocab:[ {kr:'재택근무', en:'remote work'}, {kr:'장단점', en:'pros and cons'}, {kr:'소통', en:'communication'} ],
+    grammar:['~에 대해 — "about/regarding," introduces a topic.', '장점도 있고 단점도 있다 — a natural way to present a balanced view.'] },
+  { id:'kd-disagree', title:'정중하게 반대하기', en:'Politely Disagreeing', level:'Advanced',
+    situation:'You need to respectfully push back on a suggestion in a meeting.',
+    speechLevel:{ label:'합니다체', note:'합니다체 — used to keep disagreement respectful and professional in formal settings.' },
+    lines:[
+      { speaker:'상사', role:'other', kr:'이 일정대로 진행하는 게 좋겠습니다.', en:'I think we should proceed on this schedule.', rom:'i iljeongdaero jinhaenghaneun ge jokesseumnida.' },
+      { speaker:'You', role:'learner', kr:'말씀은 이해합니다만, 시간이 조금 부족할 것 같습니다.', en:'I understand what you\'re saying, but I think we may be short on time.', rom:'malsseumeun ihaehamnidaman, sigani jogeum bujokhal geot gatseumnida.' },
+      { speaker:'상사', role:'other', kr:'그러면 얼마나 더 필요할 것 같습니까?', en:'Then how much more time do you think is needed?', rom:'geureomyeon eolmana deo pilyohal geot gatseumnikka?' },
+      { speaker:'You', role:'learner', kr:'일주일 정도 더 필요할 것 같습니다.', en:'I think we\'ll need about one more week.', rom:'iljuil jeongdo deo pilyohal geot gatseumnida.' },
+    ],
+    vocab:[ {kr:'부족하다', en:'to be insufficient/lacking'}, {kr:'~것 같습니다', en:'formal "I think that..."'}, {kr:'정도', en:'about, approximately'} ],
+    grammar:['-습니다만 — formal "but," softens a disagreement in professional speech.', '-것 같습니다 — the formal register\'s hedge, parallel to 해요체\'s -것 같아요.'] },
+  { id:'kd-complicated', title:'복잡한 상황 설명하기', en:'Explaining a Complicated Situation', level:'Advanced',
+    situation:'You explain to a friend why a plan fell through in a complicated way.',
+    speechLevel:{ label:'해요체', note:'해요체 — natural for a longer, more complex explanation between friends.' },
+    lines:[
+      { speaker:'친구', role:'other', kr:'그 계획 어떻게 됐어요? 취소됐다고 들었는데.', en:'What happened with that plan? I heard it got cancelled.', rom:'geu gyehoek eotteoke dwaesseoyo? chwisodwaetdago deureotneunde.' },
+      { speaker:'You', role:'learner', kr:'네, 처음엔 문제없었는데 갑자기 예산이 부족해져서 취소됐어요.', en:'Yes, it was fine at first, but the budget suddenly became insufficient, so it got cancelled.', rom:'ne, cheoeumen munjeeopseonneunde gapjagi yesani bujokhaejyeoseo chwisodwaesseoyo.' },
+      { speaker:'친구', role:'other', kr:'그럼 다시 계획할 수 있을까요?', en:'Then could you plan it again?', rom:'geureom dasi gyehoekhal su isseulkkayo?' },
+      { speaker:'You', role:'learner', kr:'네, 예산 문제가 해결되면 다시 진행할 생각이에요.', en:'Yes, once the budget issue is resolved, I plan to proceed again.', rom:'ne, yesan munjega haegyeoldoemyeon dasi jinhaenghal saenggagieyo.' },
+    ],
+    vocab:[ {kr:'취소되다', en:'to be cancelled'}, {kr:'예산', en:'budget'}, {kr:'해결되다', en:'to be resolved'} ],
+    grammar:['-았/었는데 갑자기 — sets up a situation, then shows an abrupt change.', '-(으)면 — "if/once," connecting a condition to a following plan.'] },
+];
+
+let kdramaScenarioIdx = 0;
+let kdramaLineIdx = 0;
+let kdramaShowTranslation = {};
+
+function getAvailableKdramaDialogues() {
+  return KDRAMA_DIALOGUES.filter(d => levelAtLeast(d.level));
+}
+
+function renderKdramaRoleplay(area) {
+  const available = getAvailableKdramaDialogues();
+  if (available.length === 0) { area.innerHTML = gatedNotice('Roleplay Dialogue', 'Beginner'); return; }
+  if (kdramaScenarioIdx >= available.length) kdramaScenarioIdx = 0;
+  const dlg = available[kdramaScenarioIdx];
+  if (kdramaLineIdx >= dlg.lines.length) kdramaLineIdx = dlg.lines.length - 1;
+  if (kdramaLineIdx < 0) kdramaLineIdx = 0;
+
+  const card = document.createElement('div');
+  card.className = 'quiz-card conversation-card kdrama-card';
+
+  let transcriptHTML = '';
+  for (let i = 0; i <= kdramaLineIdx; i++) {
+    const line = dlg.lines[i];
+    const isActive = i === kdramaLineIdx;
+    const isLearner = line.role === 'learner';
+    transcriptHTML +=
+      '<div class="kdrama-line ' + (isLearner ? 'kdrama-line-learner' : 'kdrama-line-other') + (isActive ? ' kdrama-line-active' : '') + '">' +
+        '<div class="kdrama-line-speaker">' + line.speaker + '</div>' +
+        '<div class="kdrama-line-kr">' + line.kr +
+          ' <button class="listen-btn kdrama-listen" data-speak="' + line.kr + '"><span class="listen-icon">▸</span> Listen</button>' +
+        '</div>' +
+        '<div class="kdrama-line-rom rom-text">' + (line.rom || '') + '</div>' +
+        (isActive ? '<button class="kdrama-translate-btn" data-line="' + i + '">' + (kdramaShowTranslation[dlg.id + '-' + i] ? 'Hide Translation' : 'Show Translation') + '</button>' : '') +
+        (isActive && kdramaShowTranslation[dlg.id + '-' + i] ? '<div class="kdrama-line-en">' + line.en + '</div>' : '') +
+      '</div>';
+  }
+
+  const vocabHTML = dlg.vocab.map(v => '<li><span class="kdrama-vocab-kr">' + v.kr + '</span> — ' + v.en + '</li>').join('');
+  const grammarHTML = dlg.grammar.map(g => '<li>' + g + '</li>').join('');
+
+  card.innerHTML =
+    '<div class="conversation-meta"><span class="conversation-level">' + dlg.level + '</span><span class="conversation-title">' + dlg.title + ' <span class="kdrama-title-en">(' + dlg.en + ')</span></span></div>' +
+    '<div class="conversation-situation">' + dlg.situation + '</div>' +
+    '<div class="kdrama-speech-level"><strong>' + dlg.speechLevel.label + '</strong> — ' + dlg.speechLevel.note + '</div>' +
+    '<div class="kdrama-transcript">' + transcriptHTML + '</div>' +
+    '<div class="kdrama-progress">Line ' + (kdramaLineIdx + 1) + ' / ' + dlg.lines.length + '</div>' +
+    '<div class="kdrama-controls">' +
+      '<button class="btn-check" id="kdramaPrev"' + (kdramaLineIdx === 0 ? ' disabled' : '') + '>Previous</button>' +
+      (dlg.lines[kdramaLineIdx].role === 'learner'
+        ? '<button class="btn-check" id="kdramaPractice">Practice This Line</button>'
+        : '') +
+      '<button class="btn-check" id="kdramaNext"' + (kdramaLineIdx === dlg.lines.length - 1 ? ' disabled' : '') + '>Next Line</button>' +
+      '<button class="btn-check" id="kdramaReplay">Replay Conversation</button>' +
+    '</div>' +
+    '<div class="debate-helpers kdrama-helpers">' +
+      '<div class="debate-helper-col"><div class="debate-helper-title">Vocabulary</div><ul>' + vocabHTML + '</ul></div>' +
+      '<div class="debate-helper-col"><div class="debate-helper-title">Grammar Notes</div><ul>' + grammarHTML + '</ul></div>' +
+    '</div>' +
+    '<div class="kdrama-scenario-nav">' +
+      '<button class="btn-check" id="kdramaPrevScenario">Previous Scenario</button>' +
+      '<button class="btn-check" id="kdramaNextScenario">Next Scenario</button>' +
+    '</div>';
+
+  area.appendChild(card);
+  if (typeof bindListenButtons === 'function') bindListenButtons(card);
+
+  /* Exposure only — this is speaking/listening practice, not a
+     right/wrong quiz, so no fake score or mistake is recorded here. */
+  if (typeof trackExposure === 'function') trackExposure('sentences', dlg.id + '-line-' + kdramaLineIdx);
+
+  const prevBtn = card.querySelector('#kdramaPrev');
+  if (prevBtn) prevBtn.addEventListener('click', () => { kdramaLineIdx = Math.max(0, kdramaLineIdx - 1); loadPractice(); });
+
+  const nextBtn = card.querySelector('#kdramaNext');
+  if (nextBtn) nextBtn.addEventListener('click', () => { kdramaLineIdx = Math.min(dlg.lines.length - 1, kdramaLineIdx + 1); loadPractice(); });
+
+  const practiceBtn = card.querySelector('#kdramaPractice');
+  if (practiceBtn) practiceBtn.addEventListener('click', () => {
+    if (typeof trackExposure === 'function') trackExposure('sentences', dlg.id + '-practiced-' + kdramaLineIdx);
+    kdramaLineIdx = Math.min(dlg.lines.length - 1, kdramaLineIdx + 1);
+    loadPractice();
+  });
+
+  const replayBtn = card.querySelector('#kdramaReplay');
+  if (replayBtn) replayBtn.addEventListener('click', () => { kdramaLineIdx = 0; loadPractice(); });
+
+  const prevScenarioBtn = card.querySelector('#kdramaPrevScenario');
+  if (prevScenarioBtn) prevScenarioBtn.addEventListener('click', () => {
+    kdramaScenarioIdx = (kdramaScenarioIdx - 1 + available.length) % available.length;
+    kdramaLineIdx = 0;
+    loadPractice();
+  });
+
+  const nextScenarioBtn = card.querySelector('#kdramaNextScenario');
+  if (nextScenarioBtn) nextScenarioBtn.addEventListener('click', () => {
+    kdramaScenarioIdx = (kdramaScenarioIdx + 1) % available.length;
+    kdramaLineIdx = 0;
+    loadPractice();
+  });
+
+  const translateBtn = card.querySelector('.kdrama-translate-btn');
+  if (translateBtn) translateBtn.addEventListener('click', function() {
+    const key = dlg.id + '-' + this.dataset.line;
+    kdramaShowTranslation[key] = !kdramaShowTranslation[key];
+    loadPractice();
+  });
+}
+
+function initConversationSubTabs(area) {
+  const wrap = document.createElement('div');
+  wrap.className = 'kdrama-submode-tabs';
+  wrap.innerHTML =
+    '<button class="kdrama-submode-btn' + (conversationSubMode === 'quick' ? ' active' : '') + '" data-submode="quick">Quick Practice</button>' +
+    '<button class="kdrama-submode-btn' + (conversationSubMode === 'roleplay' ? ' active' : '') + '" data-submode="roleplay">Roleplay Dialogue</button>';
+  area.appendChild(wrap);
+  wrap.querySelectorAll('.kdrama-submode-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      conversationSubMode = this.dataset.submode;
+      loadPractice();
+    });
+  });
+}
 
 function renderConversationPractice(area) {
   const available = CONVERSATION_SCENARIOS.filter(s => levelAtLeast(s.level));
