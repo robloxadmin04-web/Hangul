@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한국어 — Korean Language</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- MOBILE TOPBAR -->
+  <div class="mobile-topbar" id="mobileTopbar">
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="sidebar">
+      <span class="mobile-menu-icon"></span>
+    </button>
+    <span class="mobile-topbar-title">Korean Learning Dashboard</span>
+  </div>
+
+  <!-- SIDEBAR BACKDROP (mobile only) -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo-kr">한국어</span>
+      <span class="sidebar-logo-en">Korean</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="nav-link active" data-section="overview">
+        <span class="nav-icon">◈</span> Overview
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="hangul">
+        <span class="nav-icon">ㄱ</span> Hangul
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="reading">
+        <span class="nav-icon">가</span> Reading
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="vocabulary">
+        <span class="nav-icon">어</span> Vocabulary
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="grammar">
+        <span class="nav-icon">문</span> Grammar
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="lessons">
+        <span class="nav-icon">과</span> Lessons
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="builder">
+        <span class="nav-icon">장</span> Sentences
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="practice">
+        <span class="nav-icon">습</span> Practice
+      </a></li>
+      <li><a href="#" class="nav-link" data-section="review">
+        <span class="nav-icon">복</span> Review
+      </a></li>
+    </ul>
+    <div class="sidebar-search">
+      <input type="text" id="globalSearch" class="sidebar-search-input" placeholder="Search Korean or English…" aria-label="Search vocabulary, grammar, and Hangul">
+      <div class="sidebar-search-results" id="globalSearchResults"></div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="rom-toggle" id="romToggle" type="button" aria-pressed="true">
+        <span class="rom-toggle-label">Romanization</span>
+        <span class="rom-toggle-state" id="romToggleState">ON</span>
+      </button>
+      <div class="sidebar-streak" id="sidebarStreak">Streak — 0 days</div>
+      <span class="sidebar-level">Beginner · Level 1</span>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="#" class="mobile-nav-link active" data-section="overview">Overview</a>
+    <a href="#" class="mobile-nav-link" data-section="hangul">Hangul</a>
+    <a href="#" class="mobile-nav-link" data-section="vocabulary">Vocab</a>
+    <a href="#" class="mobile-nav-link" data-section="lessons">Lessons</a>
+    <a href="#" class="mobile-nav-link" data-section="builder">Sentences</a>
+    <a href="#" class="mobile-nav-link" data-section="practice">Practice</a>
+    <a href="#" class="mobile-nav-link" data-section="review">Review</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main">
+
+    <!-- ===================== OVERVIEW ===================== -->
+    <section class="section active" id="section-overview">
+      <div class="section-header">
+        <p class="section-eyebrow">Dashboard</p>
+        <h1 class="section-title">Korean Language</h1>
+        <p class="section-subtitle">Build your Korean foundation from Hangul to complete sentences.</p>
+      </div>
+
+      <div class="progress-grid" id="overviewProgressGrid">
+        <div class="progress-card">
+          <div class="progress-label">Hangul</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="overviewProgressFill-hangul" style="width: 0%"></div>
+          </div>
+          <div class="progress-value" id="overviewProgressValue-hangul">0%</div>
+        </div>
+        <div class="progress-card">
+          <div class="progress-label">Vocabulary</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="overviewProgressFill-vocabulary" style="width: 0%"></div>
+          </div>
+          <div class="progress-value" id="overviewProgressValue-vocabulary">0%</div>
+        </div>
+        <div class="progress-card">
+          <div class="progress-label">Grammar</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="overviewProgressFill-grammar" style="width: 0%"></div>
+          </div>
+          <div class="progress-value" id="overviewProgressValue-grammar">0%</div>
+        </div>
+        <div class="progress-card">
+          <div class="progress-label">Sentence Construction</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="overviewProgressFill-sentence" style="width: 0%"></div>
+          </div>
+          <div class="progress-value" id="overviewProgressValue-sentence">0%</div>
+        </div>
+      </div>
+
+      <div class="path-overview">
+        <h2 class="subsection-title">Learning Path</h2>
+        <div class="path-steps">
+          <div class="path-step completed">
+            <div class="path-step-num">01</div>
+            <div class="path-step-info">
+              <div class="path-step-name">Hangul</div>
+              <div class="path-step-desc">Consonants, vowels, syllable blocks</div>
+            </div>
+          </div>
+          <div class="path-connector"></div>
+          <div class="path-step completed">
+            <div class="path-step-num">02</div>
+            <div class="path-step-info">
+              <div class="path-step-name">Reading</div>
+              <div class="path-step-desc">Characters, syllables, words</div>
+            </div>
+          </div>
+          <div class="path-connector"></div>
+          <div class="path-step active-step">
+            <div class="path-step-num">03</div>
+            <div class="path-step-info">
+              <div class="path-step-name">Vocabulary</div>
+              <div class="path-step-desc">Core word sets by category</div>
+            </div>
+          </div>
+          <div class="path-connector"></div>
+          <div class="path-step">
+            <div class="path-step-num">04</div>
+            <div class="path-step-info">
+              <div class="path-step-name">Grammar</div>
+              <div class="path-step-desc">Markers, tense, politeness</div>
+            </div>
+          </div>
+          <div class="path-connector"></div>
+          <div class="path-step">
+            <div class="path-step-num">05</div>
+            <div class="path-step-info">
+              <div class="path-step-name">Sentence Construction</div>
+              <div class="path-step-desc">Build and validate sentences</div>
+            </div>
+          </div>
+          <div class="path-connector"></div>
+          <div class="path-step">
+            <div class="path-step-num">06</div>
+            <div class="path-step-info">
+              <div class="path-step-name">Practice</div>
+              <div class="path-step-desc">Quizzes and exercises</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-quick">
+        <h2 class="subsection-title">Continue Learning</h2>
+        <div class="quick-grid">
+          <button class="quick-card" data-goto="hangul">
+            <div class="quick-kr">ㄱ</div>
+            <div class="quick-label">Hangul Basics</div>
+          </button>
+          <button class="quick-card" data-goto="vocabulary">
+            <div class="quick-kr">어</div>
+            <div class="quick-label">Vocabulary</div>
+          </button>
+          <button class="quick-card" data-goto="builder">
+            <div class="quick-kr">문장</div>
+            <div class="quick-label">Sentence Builder</div>
+          </button>
+          <button class="quick-card" data-goto="practice">
+            <div class="quick-kr">연습</div>
+            <div class="quick-label">Practice</div>
+          </button>
+          <button class="quick-card" data-goto="lessons">
+            <div class="quick-kr">과</div>
+            <div class="quick-label">Lessons</div>
+          </button>
+          <button class="quick-card" data-goto="review">
+            <div class="quick-kr">복습</div>
+            <div class="quick-label">Review</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="overview-continue" id="overviewContinue"></div>
+    </section>
+
+    <!-- ===================== HANGUL ===================== -->
+    <section class="section" id="section-hangul">
+      <div class="section-header">
+        <p class="section-eyebrow">Foundations</p>
+        <h1 class="section-title">Hangul</h1>
+        <p class="section-subtitle">The Korean writing system. 24 base letters form every syllable block.</p>
+      </div>
+
+      <div class="hangul-tabs">
+        <button class="htab active" data-htab="consonants">Consonants</button>
+        <button class="htab" data-htab="vowels">Vowels</button>
+        <button class="htab" data-htab="syllables">Syllable Blocks</button>
+        <button class="htab" data-htab="batchim">Batchim</button>
+      </div>
+
+      <!-- CONSONANTS -->
+      <div class="htab-panel active" id="htab-consonants">
+        <p class="panel-note">Korean has 14 basic consonants. Each has a name and a sound value.</p>
+        <div class="hangul-grid" id="consonantGrid"></div>
+        <div class="hangul-detail" id="consonantDetail">
+          <div class="detail-placeholder">Select a consonant to explore it.</div>
+        </div>
+      </div>
+
+      <!-- VOWELS -->
+      <div class="htab-panel" id="htab-vowels">
+        <p class="panel-note">Korean has 10 basic vowels and 11 compound vowels.</p>
+        <div class="hangul-grid" id="vowelGrid"></div>
+        <div class="hangul-detail" id="vowelDetail">
+          <div class="detail-placeholder">Select a vowel to explore it.</div>
+        </div>
+      </div>
+
+      <!-- SYLLABLE BLOCKS -->
+      <div class="htab-panel" id="htab-syllables">
+        <p class="panel-note">Korean syllables are written as blocks. Each block contains at minimum one consonant and one vowel.</p>
+        <div class="syllable-demo">
+          <div class="syllable-equation">
+            <div class="syllable-part">
+              <div class="syl-char">ㄱ</div>
+              <div class="syl-role">Consonant (onset)</div>
+            </div>
+            <div class="syllable-plus">+</div>
+            <div class="syllable-part">
+              <div class="syl-char">ㅏ</div>
+              <div class="syl-role">Vowel</div>
+            </div>
+            <div class="syllable-plus">=</div>
+            <div class="syllable-part result">
+              <div class="syl-char">가</div>
+              <div class="syl-role">Syllable block</div>
+            </div>
+          </div>
+        </div>
+        <div class="syllable-examples">
+          <div class="syl-example-row" id="syllableExamples"></div>
+        </div>
+      </div>
+
+      <!-- BATCHIM -->
+      <div class="htab-panel" id="htab-batchim">
+        <p class="panel-note">Batchim (받침) is the final consonant in a syllable block. It sits below the vowel.</p>
+        <div class="batchim-demo">
+          <div class="syllable-equation">
+            <div class="syllable-part">
+              <div class="syl-char">ㄱ</div>
+              <div class="syl-role">Onset</div>
+            </div>
+            <div class="syllable-plus">+</div>
+            <div class="syllable-part">
+              <div class="syl-char">ㅏ</div>
+              <div class="syl-role">Vowel</div>
+            </div>
+            <div class="syllable-plus">+</div>
+            <div class="syllable-part">
+              <div class="syl-char">ㄱ</div>
+              <div class="syl-role">Batchim</div>
+            </div>
+            <div class="syllable-plus">=</div>
+            <div class="syllable-part result">
+              <div class="syl-char">각</div>
+              <div class="syl-role">Syllable with batchim</div>
+            </div>
+          </div>
+        </div>
+        <div class="batchim-grid" id="batchimGrid"></div>
+      </div>
+
+      <!-- CONSTRUCTOR -->
+      <div class="hangul-constructor">
+        <h2 class="subsection-title">Syllable Constructor</h2>
+        <p class="panel-note">Select a consonant and a vowel to form a syllable block.</p>
+        <div class="constructor-area">
+          <div class="constructor-picker">
+            <div class="picker-group">
+              <div class="picker-label">Consonant</div>
+              <div class="picker-chars" id="constructorConsonants"></div>
+            </div>
+            <div class="picker-group">
+              <div class="picker-label">Vowel</div>
+              <div class="picker-chars" id="constructorVowels"></div>
+            </div>
+          </div>
+          <div class="constructor-result">
+            <div class="result-equation" id="constructorEquation">
+              <span class="eq-part" id="eqConsonant">—</span>
+              <span class="eq-op">+</span>
+              <span class="eq-part" id="eqVowel">—</span>
+              <span class="eq-op">=</span>
+              <span class="eq-result" id="eqResult">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== READING ===================== -->
+    <section class="section" id="section-reading">
+      <div class="section-header">
+        <p class="section-eyebrow">Reading</p>
+        <h1 class="section-title">Reading Practice</h1>
+        <p class="section-subtitle">From individual characters to complete words and phrases.</p>
+      </div>
+
+      <div class="reading-levels">
+        <div class="reading-level">
+          <div class="rl-label">Characters</div>
+          <div class="rl-chars">
+            <span class="rl-char">가</span>
+            <span class="rl-char">나</span>
+            <span class="rl-char">다</span>
+            <span class="rl-char">라</span>
+            <span class="rl-char">마</span>
+            <span class="rl-char">바</span>
+            <span class="rl-char">사</span>
+            <span class="rl-char">아</span>
+          </div>
+        </div>
+        <div class="reading-level">
+          <div class="rl-label">Words</div>
+          <div class="rl-words">
+            <div class="rl-word">
+              <div class="rl-word-kr">학교</div>
+              <div class="rl-word-rom">hak·gyo</div>
+              <div class="rl-word-en">school</div>
+            </div>
+            <div class="rl-word">
+              <div class="rl-word-kr">친구</div>
+              <div class="rl-word-rom">chin·gu</div>
+              <div class="rl-word-en">friend</div>
+            </div>
+            <div class="rl-word">
+              <div class="rl-word-kr">한국어</div>
+              <div class="rl-word-rom">han·gu·geo</div>
+              <div class="rl-word-en">Korean language</div>
+            </div>
+            <div class="rl-word">
+              <div class="rl-word-kr">사랑</div>
+              <div class="rl-word-rom">sa·rang</div>
+              <div class="rl-word-en">love</div>
+            </div>
+          </div>
+        </div>
+        <div class="reading-level">
+          <div class="rl-label">Sentences</div>
+          <div class="rl-sentences">
+            <div class="rl-sentence">
+              <div class="rl-sentence-kr">안녕하세요.</div>
+              <div class="rl-sentence-en">Hello. (formal greeting)</div>
+            </div>
+            <div class="rl-sentence">
+              <div class="rl-sentence-kr">감사합니다.</div>
+              <div class="rl-sentence-en">Thank you.</div>
+            </div>
+            <div class="rl-sentence">
+              <div class="rl-sentence-kr">저는 학생이에요.</div>
+              <div class="rl-sentence-en">I am a student.</div>
+            </div>
+            <div class="rl-sentence">
+              <div class="rl-sentence-kr">한국어를 공부해요.</div>
+              <div class="rl-sentence-en">I study Korean.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== VOCABULARY ===================== -->
+    <section class="section" id="section-vocabulary">
+      <div class="section-header">
+        <p class="section-eyebrow">Vocabulary</p>
+        <h1 class="section-title">Word Sets</h1>
+        <p class="section-subtitle">Core vocabulary organized by category.</p>
+      </div>
+
+      <div class="vocab-category-tabs">
+        <button class="vtab active" data-vcat="greetings">Greetings</button>
+        <button class="vtab" data-vcat="numbers">Numbers</button>
+        <button class="vtab" data-vcat="people">People</button>
+        <button class="vtab" data-vcat="places">Places</button>
+        <button class="vtab" data-vcat="food">Food</button>
+        <button class="vtab" data-vcat="daily">Daily Life</button>
+      </div>
+
+      <div class="vocab-list" id="vocabList"></div>
+    </section>
+
+    <!-- ===================== GRAMMAR ===================== -->
+    <section class="section" id="section-grammar">
+      <div class="section-header">
+        <p class="section-eyebrow">Grammar</p>
+        <h1 class="section-title">Korean Grammar</h1>
+        <p class="section-subtitle">Korean is an SOV language. Markers attach to nouns to indicate their grammatical role.</p>
+      </div>
+
+      <div class="grammar-lessons" id="grammarLessons"></div>
+    </section>
+
+    <!-- ===================== SENTENCE BUILDER ===================== -->
+    <section class="section" id="section-builder">
+      <div class="section-header">
+        <p class="section-eyebrow">Sentence Construction</p>
+        <h1 class="section-title">Sentence Builder</h1>
+        <p class="section-subtitle">Arrange word blocks to form correct Korean sentences.</p>
+      </div>
+
+      <div class="builder-mode-tabs" id="builderModeTabs">
+        <button class="bmtab active" data-bmode="guided">1 · Guided</button>
+        <button class="bmtab" data-bmode="distractor">2 · Distractors</button>
+        <button class="bmtab" data-bmode="order">3 · Word Order</button>
+        <button class="bmtab" data-bmode="semiguided">4 · Semi-Guided</button>
+        <button class="bmtab" data-bmode="free">5 · Free Writing</button>
+      </div>
+
+      <div class="builder-progress-bar">
+        <div class="builder-level-label">Level <span id="builderLevelNum">1</span> · <span id="builderLevelDesc">Basic Subject + Verb</span></div>
+        <div class="builder-level-track">
+          <div class="builder-level-fill" id="builderLevelFill"></div>
+        </div>
+      </div>
+
+      <div class="builder-exercise" id="builderExerciseGuided">
+        <div class="builder-prompt">
+          <div class="builder-prompt-label">Translate into Korean:</div>
+          <div class="builder-prompt-text" id="builderPrompt"></div>
+        </div>
+
+        <div class="builder-workspace">
+          <div class="builder-workspace-label">Your sentence</div>
+          <div class="builder-slots" id="builderSlots"></div>
+          <button class="builder-clear" id="builderClear">Clear</button>
+        </div>
+
+        <div class="builder-blocks-area">
+          <div class="builder-blocks-label" id="builderBlocksLabel">Available words</div>
+          <div class="builder-blocks" id="builderBlocks"></div>
+        </div>
+
+        <div class="builder-feedback" id="builderFeedback"></div>
+        <div class="builder-explanation" id="builderExplanation"></div>
+
+        <div class="builder-actions">
+          <button class="btn-check" id="builderCheck">Check</button>
+          <button class="btn-next" id="builderNext" style="display:none">Next Exercise</button>
+        </div>
+      </div>
+
+      <!-- FREE WRITING MODE -->
+      <div class="builder-exercise builder-free" id="builderExerciseFree" style="display:none">
+        <div class="builder-prompt">
+          <div class="builder-prompt-label">Write in Korean:</div>
+          <div class="builder-prompt-text" id="freePrompt"></div>
+        </div>
+        <textarea class="free-writing-input" id="freeInput" rows="2" placeholder="한국어로 입력하세요…" aria-label="Free writing Korean input"></textarea>
+
+        <div class="keyboard-toggle-row">
+          <button class="keyboard-toggle" id="freeKeyboardToggle" type="button">Show Korean Keyboard</button>
+        </div>
+        <div class="korean-keyboard" id="freeKeyboard" style="display:none"></div>
+
+        <div class="builder-feedback" id="freeFeedback"></div>
+        <div class="builder-explanation" id="freeExplanation"></div>
+
+        <div class="builder-actions">
+          <button class="btn-check" id="freeCheck">Check</button>
+          <button class="btn-next" id="freeNext" style="display:none">Next Exercise</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PRACTICE ===================== -->
+    <section class="section" id="section-practice">
+      <div class="section-header">
+        <p class="section-eyebrow">Practice</p>
+        <h1 class="section-title">Exercises</h1>
+        <p class="section-subtitle">Test your knowledge with focused drills.</p>
+      </div>
+
+      <div class="practice-mode-tabs">
+        <button class="ptab active" data-pmode="hangul-quiz">Hangul Quiz</button>
+        <button class="ptab" data-pmode="vocab-quiz">Vocabulary Quiz</button>
+        <button class="ptab" data-pmode="word-order">Word Order</button>
+        <button class="ptab" data-pmode="listening">Listening</button>
+        <button class="ptab" data-pmode="translation">Translation</button>
+        <button class="ptab" data-pmode="free-writing">Free Writing</button>
+        <button class="ptab" data-pmode="dictation">Dictation</button>
+        <button class="ptab" data-pmode="conversation">Conversation</button>
+        <button class="ptab" data-pmode="debate">Debate / Opinion</button>
+      </div>
+
+      <div class="practice-area" id="practiceArea"></div>
+    </section>
+
+    <!-- ===================== LESSONS ===================== -->
+    <section class="section" id="section-lessons">
+      <div class="section-header">
+        <p class="section-eyebrow">Guided Curriculum</p>
+        <h1 class="section-title">Lessons</h1>
+        <p class="section-subtitle">A structured course from the Hangul alphabet to full Korean sentences.</p>
+      </div>
+
+      <div class="lesson-continue" id="lessonContinue"></div>
+
+      <div class="lesson-curriculum" id="lessonCurriculum"></div>
+
+      <!-- LESSON VIEW (single focused lesson) -->
+      <div class="lesson-view" id="lessonView">
+        <button class="lesson-back" id="lessonBack" aria-label="Back to curriculum">← Back to Lessons</button>
+        <div class="lesson-view-inner" id="lessonViewInner"></div>
+      </div>
+    </section>
+
+    <!-- ===================== REVIEW ===================== -->
+    <section class="section" id="section-review">
+      <div class="section-header">
+        <p class="section-eyebrow">Reinforcement</p>
+        <h1 class="section-title">Review</h1>
+        <p class="section-subtitle">Bring back material you've already studied, and revisit past mistakes.</p>
+      </div>
+
+      <div class="review-summary" id="reviewSummary"></div>
+
+      <div class="review-mistakes" id="reviewMistakes"></div>
+
+      <div class="review-session" id="reviewSession"></div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

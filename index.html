@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국어 — Learn Korean, Properly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D0D0D; --surface:#141414; --surface-2:#1C1C1C;
+  --border:#2A2A2A; --border-light:#333333;
+  --text:#EFEFEA; --text-muted:#888880; --text-dim:#555550;
+  --accent:#4A7C59;
+  --kr-font:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --ui-font:'Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--ui-font);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+
+/* NAV */
+header{position:sticky;top:0;z-index:50;background:rgba(13,13,13,0.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.nav-logo-kr{font-family:var(--kr-font);font-size:19px;font-weight:700}
+.nav-logo-en{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);display:block;margin-top:2px}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:13px;color:var(--text-muted);transition:color .15s ease}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{padding:9px 20px;border:1px solid var(--border-light);font-size:13px;letter-spacing:0.02em;transition:border-color .15s ease,background .15s ease}
+.nav-cta:hover{border-color:var(--text-dim);background:var(--surface-2)}
+.nav-toggle{display:none}
+
+/* HERO */
+.hero{padding:96px 0 80px;border-bottom:1px solid var(--border)}
+.hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center}
+.hero-eyebrow{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-dim);margin-bottom:20px}
+.hero-title{font-family:var(--kr-font);font-size:52px;font-weight:700;line-height:1.12;letter-spacing:-0.01em;margin-bottom:22px}
+.hero-title .accent{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--text-muted);max-width:460px;margin-bottom:36px;line-height:1.7}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+.btn-primary{padding:13px 30px;font-size:14px;letter-spacing:0.03em;background:var(--surface-2);border:1px solid var(--accent);color:var(--accent);transition:background .15s ease}
+.btn-primary:hover{background:rgba(74,124,89,0.12)}
+.btn-secondary{padding:13px 30px;font-size:14px;letter-spacing:0.03em;background:none;border:1px solid var(--border-light);color:var(--text);transition:border-color .15s ease,background .15s ease}
+.btn-secondary:hover{border-color:var(--text-dim);background:var(--surface-2)}
+.hero-meta{display:flex;gap:28px;font-size:12px;color:var(--text-dim)}
+.hero-meta strong{color:var(--text);font-weight:500}
+
+.hero-panel{border:1px solid var(--border);background:var(--surface);padding:32px}
+.hp-eq{display:flex;align-items:center;justify-content:center;gap:16px;padding:36px 0;border-bottom:1px solid var(--border);margin-bottom:24px}
+.hp-part{text-align:center}
+.hp-char{font-family:var(--kr-font);font-size:44px;font-weight:300;line-height:1;margin-bottom:8px}
+.hp-part.result .hp-char{color:var(--accent);font-size:52px}
+.hp-role{font-size:10px;color:var(--text-dim);letter-spacing:0.04em}
+.hp-plus{font-size:20px;color:var(--text-dim);font-weight:300}
+.hp-sentence-kr{font-family:var(--kr-font);font-size:22px;font-weight:300;margin-bottom:6px}
+.hp-sentence-en{font-size:13px;color:var(--text-muted)}
+
+/* SECTION shared */
+section{padding:80px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px}
+.section-title{font-family:var(--kr-font);font-size:32px;font-weight:700;letter-spacing:-0.01em;margin-bottom:14px}
+.section-sub{font-size:15px;color:var(--text-muted);max-width:540px;line-height:1.7}
+
+/* FEATURES */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px}
+.feature-card{background:var(--surface);padding:32px 28px}
+.feature-num{font-size:11px;color:var(--text-dim);margin-bottom:18px;letter-spacing:0.05em}
+.feature-kr{font-family:var(--kr-font);font-size:28px;font-weight:300;color:var(--accent);margin-bottom:16px}
+.feature-name{font-size:15px;font-weight:500;margin-bottom:8px}
+.feature-desc{font-size:13px;color:var(--text-dim);line-height:1.7}
+
+/* PATH */
+.path{margin-top:48px}
+.path-row{display:flex;align-items:flex-start;gap:20px;padding:20px 0;border-bottom:1px solid var(--border)}
+.path-row:last-child{border-bottom:none}
+.path-num{font-size:12px;color:var(--text-dim);min-width:32px;padding-top:3px}
+.path-info-name{font-size:16px;font-weight:500;margin-bottom:4px}
+.path-info-desc{font-size:13px;color:var(--text-dim)}
+
+/* PREVIEW */
+.preview-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:40px 0 0}
+.ptab{padding:10px 20px;background:none;border:none;font-size:13px;color:var(--text-dim);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s ease,border-color .15s ease}
+.ptab:hover{color:var(--text-muted)}
+.ptab.active{color:var(--text);border-bottom-color:var(--text)}
+.preview-pane{display:none;padding:36px 0 0}
+.preview-pane.active{display:block}
+.pv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);max-width:520px}
+.pv-cell{background:var(--surface);padding:14px 6px;text-align:center}
+.pv-cell-char{font-family:var(--kr-font);font-size:22px;font-weight:300;margin-bottom:4px}
+.pv-cell-rom{font-size:9px;color:var(--text-dim)}
+.pv-vocab-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);max-width:520px}
+.pv-vocab-item{background:var(--surface);display:flex;justify-content:space-between;padding:16px 20px}
+.pv-vocab-kr{font-family:var(--kr-font);font-size:20px;font-weight:300}
+.pv-vocab-en{font-size:13px;color:var(--text-muted);align-self:center}
+.pv-blocks{display:flex;flex-wrap:wrap;gap:6px;max-width:520px}
+.pv-block{font-family:var(--kr-font);font-size:16px;background:var(--surface-2);border:1px solid var(--border-light);padding:9px 15px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px}
+.stat-card{background:var(--surface);padding:28px 24px}
+.stat-num{font-family:var(--kr-font);font-size:34px;font-weight:300;color:var(--text);margin-bottom:6px}
+.stat-label{font-size:11.5px;color:var(--text-dim);letter-spacing:0.03em}
+
+/* CTA */
+.cta{padding:90px 0;text-align:center;border-bottom:none}
+.cta-title{font-family:var(--kr-font);font-size:34px;font-weight:700;margin-bottom:16px}
+.cta-sub{font-size:15px;color:var(--text-muted);margin-bottom:32px}
+
+/* FOOTER */
+footer{padding:32px 0}
+.footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:var(--kr-font);font-size:15px;font-weight:700}
+.footer-note{font-size:12px;color:var(--text-dim)}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:12px;color:var(--text-dim);transition:color .15s ease}
+.footer-links a:hover{color:var(--text-muted)}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-title{font-size:38px}
+  .feature-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+}
+@media (max-width:520px){
+  .wrap{padding:0 20px}
+  .hero{padding:64px 0 56px}
+  .hero-title{font-size:30px}
+  section{padding:56px 0}
+  .section-title{font-size:26px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .hp-char{font-size:34px}
+  .hp-part.result .hp-char{font-size:40px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div>
+      <span class="nav-logo-kr">한국어</span>
+      <span class="nav-logo-en">Korean</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#curriculum">Curriculum</a></li>
+      <li><a href="#preview">Preview</a></li>
+      <li><a href="#path">Learning Path</a></li>
+    </ul>
+    <a class="nav-cta" href="dashboard.html">Open App</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" style="border-bottom:1px solid var(--border)">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="hero-eyebrow">A Structured Korean Course</p>
+        <h1 class="hero-title">Learn Korean from<br><span class="accent">Hangul</span> to full sentences.</h1>
+        <p class="hero-sub">한국어 is a formal, minimal course that takes you from the alphabet to real conversation — guided lessons, sentence construction, pronunciation, and spaced review, all in one place.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="dashboard.html">Start Learning</a>
+          <a class="btn-secondary" href="#curriculum">View Curriculum</a>
+        </div>
+        <div class="hero-meta">
+          <span><strong>16</strong> guided lessons</span>
+          <span><strong>6</strong> vocabulary categories</span>
+          <span><strong>5</strong> sentence-builder modes</span>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <div class="hp-eq">
+          <div class="hp-part"><div class="hp-char">ㄱ</div><div class="hp-role">Consonant</div></div>
+          <div class="hp-plus">+</div>
+          <div class="hp-part"><div class="hp-char">ㅏ</div><div class="hp-role">Vowel</div></div>
+          <div class="hp-plus">=</div>
+          <div class="hp-part result"><div class="hp-char">가</div><div class="hp-role">Syllable Block</div></div>
+        </div>
+        <div class="hp-sentence-kr">저는 한국어를 공부해요.</div>
+        <div class="hp-sentence-en">"I study Korean." — Subject → Object → Verb</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="curriculum">
+    <div class="wrap">
+      <p class="section-eyebrow">What's Inside</p>
+      <h2 class="section-title">Everything a real course needs</h2>
+      <p class="section-sub">Not just flashcards — a complete progression with structure, feedback, and reinforcement built in.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-num">01</div>
+          <div class="feature-kr">과</div>
+          <div class="feature-name">Guided Lessons</div>
+          <div class="feature-desc">A real curriculum — from the Hangul alphabet through core grammar — with intros, examples, and practice checks.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">02</div>
+          <div class="feature-kr">장</div>
+          <div class="feature-name">Sentence Builder</div>
+          <div class="feature-desc">Progress from guided word blocks to free typing, with plain-language explanations when you get something wrong.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">03</div>
+          <div class="feature-kr">복습</div>
+          <div class="feature-name">Review System</div>
+          <div class="feature-desc">Previously studied Hangul, vocabulary, and grammar resurface automatically, along with items you got wrong.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">04</div>
+          <div class="feature-kr">발음</div>
+          <div class="feature-name">Pronunciation</div>
+          <div class="feature-desc">Listen buttons on vocabulary, sentences, and grammar examples using native Korean speech synthesis.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">05</div>
+          <div class="feature-kr">입력</div>
+          <div class="feature-name">Korean Keyboard</div>
+          <div class="feature-desc">A compact virtual keyboard that composes real syllable blocks — consonant, vowel, and batchim — as you type.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">06</div>
+          <div class="feature-kr">연습</div>
+          <div class="feature-name">Focused Practice</div>
+          <div class="feature-desc">Hangul, vocabulary, listening, translation, word order, and free writing drills — switch modes anytime.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREVIEW -->
+  <section id="preview">
+    <div class="wrap">
+      <p class="section-eyebrow">A Closer Look</p>
+      <h2 class="section-title">See it before you start</h2>
+      <p class="section-sub">A quick look at three parts of the app, using real Korean content — no filler.</p>
+
+      <div class="preview-tabs" role="tablist">
+        <button class="ptab active" data-pv="hangul">Hangul</button>
+        <button class="ptab" data-pv="vocab">Vocabulary</button>
+        <button class="ptab" data-pv="builder">Sentence Builder</button>
+      </div>
+
+      <div class="preview-pane active" id="pv-hangul">
+        <div class="pv-grid">
+          <div class="pv-cell"><div class="pv-cell-char">ㄱ</div><div class="pv-cell-rom">g/k</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㄴ</div><div class="pv-cell-rom">n</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㄷ</div><div class="pv-cell-rom">d/t</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㄹ</div><div class="pv-cell-rom">r/l</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㅁ</div><div class="pv-cell-rom">m</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㅂ</div><div class="pv-cell-rom">b/p</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㅅ</div><div class="pv-cell-rom">s</div></div>
+          <div class="pv-cell"><div class="pv-cell-char">ㅇ</div><div class="pv-cell-rom">ng/-</div></div>
+        </div>
+      </div>
+
+      <div class="preview-pane" id="pv-vocab">
+        <div class="pv-vocab-list">
+          <div class="pv-vocab-item"><span class="pv-vocab-kr">학교</span><span class="pv-vocab-en">school</span></div>
+          <div class="pv-vocab-item"><span class="pv-vocab-kr">친구</span><span class="pv-vocab-en">friend</span></div>
+          <div class="pv-vocab-item"><span class="pv-vocab-kr">한국어</span><span class="pv-vocab-en">Korean language</span></div>
+          <div class="pv-vocab-item"><span class="pv-vocab-kr">감사합니다</span><span class="pv-vocab-en">thank you (formal)</span></div>
+        </div>
+      </div>
+
+      <div class="preview-pane" id="pv-builder">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px;letter-spacing:0.05em;text-transform:uppercase">Translate: "I study Korean."</p>
+        <div class="pv-blocks">
+          <div class="pv-block">저는</div>
+          <div class="pv-block">한국어를</div>
+          <div class="pv-block">공부해요</div>
+          <div class="pv-block" style="opacity:.4">학교에</div>
+          <div class="pv-block" style="opacity:.4">가요</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEARNING PATH -->
+  <section id="path">
+    <div class="wrap">
+      <p class="section-eyebrow">Learning Path</p>
+      <h2 class="section-title">One continuous progression</h2>
+      <p class="section-sub">Each stage builds on the last — nothing feels disconnected from what came before.</p>
+
+      <div class="path">
+        <div class="path-row">
+          <div class="path-num">01</div>
+          <div><div class="path-info-name">Hangul</div><div class="path-info-desc">Consonants, vowels, syllable blocks, batchim</div></div>
+        </div>
+        <div class="path-row">
+          <div class="path-num">02</div>
+          <div><div class="path-info-name">Reading</div><div class="path-info-desc">Characters, words, and full sentences</div></div>
+        </div>
+        <div class="path-row">
+          <div class="path-num">03</div>
+          <div><div class="path-info-name">Vocabulary &amp; Grammar</div><div class="path-info-desc">Core word sets and essential particles</div></div>
+        </div>
+        <div class="path-row">
+          <div class="path-num">04</div>
+          <div><div class="path-info-name">Guided Lessons</div><div class="path-info-desc">Structured curriculum tying it all together</div></div>
+        </div>
+        <div class="path-row">
+          <div class="path-num">05</div>
+          <div><div class="path-info-name">Sentence Builder &amp; Practice</div><div class="path-info-desc">From guided blocks to free writing</div></div>
+        </div>
+        <div class="path-row">
+          <div class="path-num">06</div>
+          <div><div class="path-info-name">Review</div><div class="path-info-desc">Spaced reinforcement of everything learned</div></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num">14</div><div class="stat-label">Basic Consonants</div></div>
+        <div class="stat-card"><div class="stat-num">10</div><div class="stat-label">Basic Vowels</div></div>
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Grammar Markers</div></div>
+        <div class="stat-card"><div class="stat-num">9</div><div class="stat-label">Practice Modes</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" style="border-bottom:1px solid var(--border)">
+    <div class="wrap">
+      <h2 class="cta-title">시작할 준비가 되셨나요?</h2>
+      <p class="cta-sub">"Ready to start?" — no account needed, your progress is saved on this device.</p>
+      <a class="btn-primary" href="dashboard.html">Open the App</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <span class="footer-logo">한국어</span>
+    <ul class="footer-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="#curriculum">Curriculum</a></li>
+      <li><a href="#path">Learning Path</a></li>
+    </ul>
+    <span class="footer-note">Formal · Minimal · Self-paced</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.ptab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.ptab').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.preview-pane').forEach(function(p){ p.classList.remove('active'); });
+    this.classList.add('active');
+    var pane = document.getElementById('pv-' + this.dataset.pv);
+    if (pane) pane.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
