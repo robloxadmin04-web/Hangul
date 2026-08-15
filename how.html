@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How It Works — 한국어</title>
+<meta name="description" content="See the Hangul Korean learning system in action — Hangul, vocabulary, grammar, sentence building, listening, review, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="how.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="nav-logo" href="index.html">
+      <span class="nav-logo-kr">한국어</span>
+      <span class="nav-logo-en">Korean</span>
+    </a>
+    <div class="nav-progress" aria-hidden="true"><div class="nav-progress-fill" id="navProgressFill"></div></div>
+    <div class="nav-right">
+      <a class="nav-back nav-links-inline" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        Home
+      </a>
+      <a class="nav-cta primary nav-links-inline" href="dashboard.html">Start Learning</a>
+      <button class="mnav-toggle" id="mnavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mnavDrawer">
+        <span class="mnav-icon"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mnav-backdrop" id="mnavBackdrop"></div>
+<nav class="mnav-drawer" id="mnavDrawer" aria-label="Mobile navigation">
+  <a href="index.html">← Back to Home</a>
+  <a href="dashboard.html">Start Learning</a>
+</nav>
+
+<main id="main">
+
+  <!-- INTRO -->
+  <section class="tour-intro">
+    <div class="wrap">
+      <p class="tour-eyebrow">Product Tour</p>
+      <h1 class="tour-title">See how <span class="accent">한국어</span> actually teaches Korean.</h1>
+      <p class="tour-sub">Seventeen small, real demonstrations — not a feature list. Everything below reflects what's inside the dashboard, using isolated example data.</p>
+      <p class="tour-count">01 / 17 — scroll to begin</p>
+    </div>
+  </section>
+
+  <!-- 01 HANGUL FOUNDATION -->
+  <section class="demo-section" id="demo-hangul" data-demo-num="01">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">01</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Hangul Foundation</p>
+          <h2 class="demo-title">Every character, explained</h2>
+          <p class="demo-desc">Click a consonant to see its name, romanization, and a real example syllable — the same detail view used throughout the Hangul section.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="hf-grid" id="hfGrid" role="group" aria-label="Sample Hangul consonants"></div>
+        <div class="hf-detail" id="hfDetail">
+          <div class="hf-placeholder">Select a consonant above to explore it.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 VOCABULARY -->
+  <section class="demo-section" id="demo-vocab" data-demo-num="02">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">02</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Vocabulary</p>
+          <h2 class="demo-title">Words with real context</h2>
+          <p class="demo-desc">Every word ships with a meaning and an example sentence — not an isolated flashcard. Reveal each on your own pace.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="vocab-card">
+          <div class="vocab-kr" id="vocabKr">학교</div>
+          <div class="vocab-reveal-row">
+            <button class="demo-btn" id="vocabMeaningBtn" type="button" aria-expanded="false">Reveal Meaning</button>
+            <button class="demo-btn" id="vocabExampleBtn" type="button" aria-expanded="false">Show Example</button>
+          </div>
+          <div class="vocab-meaning" id="vocabMeaning">school</div>
+          <div class="vocab-example" id="vocabExample">
+            <span class="ex-kr">학교에 가요.</span>
+            <span class="ex-en">I go to school.</span>
+          </div>
+        </div>
+        <div class="vocab-nav">
+          <button class="demo-btn" id="vocabNextBtn" type="button">Next Word</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 GRAMMAR -->
+  <section class="demo-section" id="demo-grammar" data-demo-num="03">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">03</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 4h11v16H9z"/><path d="M4 9h2M4 15h2"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Grammar</p>
+          <h2 class="demo-title">Side-by-side comparisons</h2>
+          <p class="demo-desc">Korean grammar is full of near-synonyms. The dashboard explains the difference directly, with real examples — try both markers below.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="gr-tabs" role="tablist" aria-label="Grammar comparison">
+          <button class="gr-tab active" id="grTabA" data-gr="a" role="tab" aria-selected="true">은/는</button>
+          <button class="gr-tab" id="grTabB" data-gr="b" role="tab" aria-selected="false">이/가</button>
+        </div>
+        <div class="gr-panel" id="grPanel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 LESSONS -->
+  <section class="demo-section" id="demo-lessons" data-demo-num="04">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">04</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Guided Curriculum</p>
+          <h2 class="demo-title">One continuous curriculum</h2>
+          <p class="demo-desc">46 lessons across nine stages, from the Hangul alphabet to Immersion-level reading — the exact structure used in the Lessons section.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="lp-path" id="lpPath"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 SENTENCE BUILDER -->
+  <section class="demo-section" id="demo-builder" data-demo-num="05">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">05</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M7 9h10M7 13h6"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Sentence Construction</p>
+          <h2 class="demo-title">Build a sentence, block by block</h2>
+          <p class="demo-desc">Tap the word tiles in order to assemble the Korean sentence. This mirrors the Guided mode of the real Sentence Builder.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <p class="sb-prompt">Translate: "I go to school."</p>
+        <div class="sb-slots" id="sbSlots" aria-label="Your sentence"></div>
+        <div class="sb-blocks" id="sbBlocks" aria-label="Available words"></div>
+        <div class="sb-complete" id="sbComplete">저는 학교에 가요. — "I go to school."</div>
+        <button class="demo-btn sb-reset" id="sbResetBtn" type="button">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 LISTENING -->
+  <section class="demo-section" id="demo-listening" data-demo-num="06">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">06</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h3l3-7 4 14 3-10 2 3h3"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Listening</p>
+          <h2 class="demo-title">Hear it before you read it</h2>
+          <p class="demo-desc">Listen buttons throughout the app use your browser's Korean (ko-KR) speech synthesis — not pre-recorded native audio.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="ls-card">
+          <div class="ls-kr">오늘 뭐 해요?</div>
+          <div class="ls-actions">
+            <button class="listen-btn" id="listenDemoBtn" type="button" data-speak="오늘 뭐 해요?"><span class="listen-icon">▸</span> Listen</button>
+          </div>
+          <p class="demo-note" id="listenNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 DICTATION -->
+  <section class="demo-section" id="demo-dictation" data-demo-num="07">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">07</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h3l3-7 4 14 3-10 2 3h3"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Dictation</p>
+          <h2 class="demo-title">Listen, then write what you hear</h2>
+          <p class="demo-desc">Dictation pairs listening with writing. Play the audio, then reveal the sentence to check yourself — no accuracy score is fabricated.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="ls-card">
+          <div class="ls-kr hidden-text" id="dictationText">오늘 뭐 해요?</div>
+          <div class="ls-actions">
+            <button class="listen-btn" id="dictationListenBtn" type="button" data-speak="오늘 뭐 해요?"><span class="listen-icon">▸</span> Listen</button>
+            <button class="demo-btn" id="dictationRevealBtn" type="button">Reveal Sentence</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 CONVERSATION -->
+  <section class="demo-section" id="demo-conversation" data-demo-num="08">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">08</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Conversation</p>
+          <h2 class="demo-title">Roleplay Dialogue</h2>
+          <p class="demo-desc">Original, natural dialogues built for the app — each tagged with the speech level being used (해요체, 반말, and others), with vocabulary and grammar notes alongside.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="cv-card">
+          <div class="cv-meta">
+            <span class="cv-level">Beginner</span>
+            <span class="cv-speechlevel"><strong style="color:var(--text)">해요체</strong> — polite, everyday speech</span>
+          </div>
+          <p class="cv-situation">You run into a classmate before class starts.</p>
+          <div id="cvLines"></div>
+          <div class="cv-controls">
+            <button class="demo-btn" id="cvPrevBtn" type="button">Previous</button>
+            <button class="demo-btn" id="cvNextBtn" type="button">Next Line</button>
+            <button class="demo-btn" id="cvTranslateBtn" type="button">Show Translation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 SPEAKING PRACTICE -->
+  <section class="demo-section" id="demo-speaking" data-demo-num="09">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">09</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Speaking Practice</p>
+          <h2 class="demo-title">From recognizing to speaking</h2>
+          <p class="demo-desc">Every roleplay line has a Listen button and a "Practice This Line" step, designed to move you from reading Korean to saying it out loud yourself.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="sp-steps" id="spSteps">
+          <div class="sp-step" data-step="0"><div class="sp-step-label">Listen</div></div>
+          <span class="sp-arrow">→</span>
+          <div class="sp-step" data-step="1"><div class="sp-step-label">Repeat Aloud</div></div>
+          <span class="sp-arrow">→</span>
+          <div class="sp-step" data-step="2"><div class="sp-step-label">Continue</div></div>
+        </div>
+        <button class="demo-btn" id="spAdvanceBtn" type="button">Try It</button>
+        <p class="demo-note">There's no speech recognition or pronunciation scoring in the app — this is a self-guided listen-and-repeat habit, not an automated grade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 REVIEW -->
+  <section class="demo-section" id="demo-review" data-demo-num="10">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">10</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M4.5 10a8 8 0 0 1 14.7-3M19.5 14a8 8 0 0 1-14.7 3"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Reinforcement</p>
+          <h2 class="demo-title">What you've studied comes back</h2>
+          <p class="demo-desc">Example learner state below — Hangul, vocabulary, and grammar you've been exposed to automatically resurface for review.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <p class="demo-note" style="margin-top:0 0 18px"><strong>Example data</strong> — this is not your actual review history.</p>
+        <div class="rv-summary">
+          <div class="rv-summary-card"><div class="rv-summary-num">12</div><div class="rv-summary-label">Vocabulary</div></div>
+          <div class="rv-summary-card"><div class="rv-summary-num">9</div><div class="rv-summary-label">Hangul</div></div>
+          <div class="rv-summary-card"><div class="rv-summary-num">4</div><div class="rv-summary-label">Grammar</div></div>
+          <div class="rv-summary-card"><div class="rv-summary-num">6</div><div class="rv-summary-label">Sentences</div></div>
+        </div>
+        <div class="rv-list">
+          <div class="rv-item"><span class="rv-item-kr">학교</span><span class="rv-item-note">Recently practiced</span></div>
+          <div class="rv-item"><span class="rv-item-kr">먹다</span><span class="rv-item-note">Recently practiced</span></div>
+          <div class="rv-item"><span class="rv-item-kr">친구</span><span class="rv-item-note">Recently practiced</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 ADAPTIVE REVIEW -->
+  <section class="demo-section" id="demo-adaptive" data-demo-num="11">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">11</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M4.5 10a8 8 0 0 1 14.7-3M19.5 14a8 8 0 0 1-14.7 3"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Adaptive Review</p>
+          <h2 class="demo-title">Mistakes surface more often</h2>
+          <p class="demo-desc">Words you've missed are weighted to reappear sooner in review — the same items you got right recede into the background.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <p class="demo-note" style="margin:0 0 18px"><strong>Example data</strong> — illustrating the concept only.</p>
+        <div class="ar-table">
+          <div class="ar-row"><span class="ar-word">학교</span><span class="ar-marks"><span class="miss">✕ ✕ ✕</span></span></div>
+          <div class="ar-row"><span class="ar-word">먹다</span><span class="ar-marks"><span class="miss">✕</span></span></div>
+          <div class="ar-row"><span class="ar-word">친구</span><span class="ar-marks"><span class="hit">✓</span></span></div>
+        </div>
+        <p class="ar-priority-title">Review Priority</p>
+        <div class="ar-bar-row"><span class="ar-bar-label">학교</span><div class="ar-bar-track"><div class="ar-bar-fill" data-target="90"></div></div></div>
+        <div class="ar-bar-row"><span class="ar-bar-label">먹다</span><div class="ar-bar-track"><div class="ar-bar-fill" data-target="45"></div></div></div>
+        <div class="ar-bar-row"><span class="ar-bar-label">친구</span><div class="ar-bar-track"><div class="ar-bar-fill" data-target="15"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 SKILL MASTERY -->
+  <section class="demo-section" id="demo-mastery" data-demo-num="12">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">12</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Skill Mastery</p>
+          <h2 class="demo-title">Six skills, tracked separately</h2>
+          <p class="demo-desc">The Overview dashboard scores each of these from your actual activity — the same six categories, shown here with example values.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <p class="demo-note" style="margin:0 0 18px"><strong>Example data</strong> — not a claim about your progress.</p>
+        <div class="ms-grid" id="msGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 LEARNER LEVEL -->
+  <section class="demo-section" id="demo-level" data-demo-num="13">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">13</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Learner Level</p>
+          <h2 class="demo-title">Seven levels, based on activity</h2>
+          <p class="demo-desc">Your level rises automatically as you complete lessons — it gates certain content (like Debate practice) until you're ready.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="lv-path" id="lvPath"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 TOPIK PREPARATION -->
+  <section class="demo-section" id="demo-topik" data-demo-num="14">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">14</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">TOPIK Preparation</p>
+          <h2 class="demo-title">Lessons tagged for TOPIK</h2>
+          <p class="demo-desc">A subset of the existing curriculum is filtered by TOPIK level, so relevant lessons surface as you approach that stage.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="tp-tabs" role="tablist">
+          <button class="tp-tab active" id="tpTabI" data-topik="I" role="tab" aria-selected="true">TOPIK I</button>
+          <button class="tp-tab" id="tpTabII" data-topik="II" role="tab" aria-selected="false">TOPIK II</button>
+        </div>
+        <div class="tp-panel" id="tpPanel"></div>
+        <p class="tp-disclaimer">Practice content is for learning purposes and is not an official TOPIK examination.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 WORD FAMILIES & COLLOCATIONS -->
+  <section class="demo-section" id="demo-wordfam" data-demo-num="15">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">15</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Word Families &amp; Collocations</p>
+          <h2 class="demo-title">Beyond single words</h2>
+          <p class="demo-desc">Word families show how one verb changes shape. Collocations show which words naturally pair together in real Korean.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="wf-card">
+          <div class="wf-base">먹다 <span class="wf-meaning">— eat (dictionary form)</span></div>
+          <div class="wf-forms">
+            <div class="wf-form-row"><span class="wf-form-kr">먹어요</span><span class="wf-form-type">present</span><span class="wf-form-ex">저는 밥을 먹어요.</span></div>
+            <div class="wf-form-row"><span class="wf-form-kr">먹었어요</span><span class="wf-form-type">past</span><span class="wf-form-ex">어제 밥을 먹었어요.</span></div>
+            <div class="wf-form-row"><span class="wf-form-kr">먹을 거예요</span><span class="wf-form-type">future</span><span class="wf-form-ex">내일 밥을 먹을 거예요.</span></div>
+          </div>
+        </div>
+        <div class="col-list">
+          <div>
+            <div class="col-base">약속을 잡다 <span class="col-meaning">— to make/set an appointment</span></div>
+            <div class="col-combo"><span class="col-combo-kr">친구랑 약속을 잡다</span><span>to set up plans with a friend</span></div>
+          </div>
+          <div>
+            <div class="col-base">시간을 보내다 <span class="col-meaning">— to spend time</span></div>
+            <div class="col-combo"><span class="col-combo-kr">가족과 시간을 보내다</span><span>to spend time with family</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 ROMANIZATION -->
+  <section class="demo-section" id="demo-rom" data-demo-num="16">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">16</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Romanization</p>
+          <h2 class="demo-title">An aid, never a replacement</h2>
+          <p class="demo-desc">Korean text is always shown. Romanization is an optional layer you can toggle on or off — try it below.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="rom-demo">
+          <div class="rom-sentence-kr">저는 한국어를 공부해요.</div>
+          <div class="rom-sentence-rom" id="romText">jeo·neun han·gu·geo·reul gong·bu·hae·yo</div>
+          <button class="demo-btn rom-toggle-demo" id="romToggleBtn" type="button" aria-pressed="true">Romanization: ON</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 KOREAN KEYBOARD -->
+  <section class="demo-section" id="demo-keyboard" data-demo-num="17">
+    <div class="wrap">
+      <div class="demo-head">
+        <span class="demo-num">17</span>
+        <span class="demo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="12" rx="1.5"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg>
+        </span>
+        <div class="demo-titles">
+          <p class="demo-eyebrow">Korean Keyboard</p>
+          <h2 class="demo-title">Type syllable blocks directly</h2>
+          <p class="demo-desc">The built-in keyboard composes real syllable blocks as you tap — consonant, then vowel. Try a few combinations below.</p>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="kb-display placeholder" id="kbDisplay">Tap a consonant, then a vowel</div>
+        <div class="kb-rows">
+          <div class="kb-row" id="kbConsonants"></div>
+          <div class="kb-row" id="kbVowels"></div>
+        </div>
+        <button class="demo-btn kb-clear" id="kbClearBtn" type="button">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="wrap">
+      <h2 class="final-cta-title">Ready to start learning Korean?</h2>
+      <p class="final-cta-sub">No account needed — your progress is saved on this device.</p>
+      <div class="final-cta-actions">
+        <a class="btn-primary" href="dashboard.html">Start Learning</a>
+        <a class="btn-secondary" href="index.html">Back to Home</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <span class="footer-logo">한국어</span>
+    <span class="footer-note">Formal · Minimal · Self-paced</span>
+  </div>
+</footer>
+
+<script src="how.js"></script>
+</body>
+</html>
