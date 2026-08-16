@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PRACTICE — 한국어 Conversation Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body class="practice-body">
+
+  <!-- TOP BAR -->
+  <header class="pr-topbar">
+    <a href="dashboard.html" class="pr-back" aria-label="Back to Dashboard">←</a>
+    <div class="pr-brand">
+      <span class="pr-brand-kr">연습</span>
+      <span class="pr-brand-en">PRACTICE</span>
+    </div>
+    <div class="pr-topbar-actions">
+      <button type="button" class="pr-status" id="prStatus" aria-live="polite">
+        <span class="pr-status-dot" id="prStatusDot"></span>
+        <span id="prStatusText">Not configured</span>
+      </button>
+      <button type="button" class="pr-icon-btn" id="prHistoryBtn" aria-label="Mistake bank and history">📘</button>
+      <button type="button" class="pr-icon-btn" id="prSettingsBtn" aria-label="Practice settings">⚙</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="pr-main" id="prMain">
+
+    <!-- SETUP (shown before a session starts) -->
+    <section class="pr-setup" id="prSetup">
+      <div class="pr-setup-inner">
+        <p class="section-eyebrow">Conversation Practice</p>
+        <h1 class="pr-setup-title">Choose what to practice</h1>
+        <p class="pr-setup-sub">Pick a conversation style and difficulty. Your AI tutor adapts to both.</p>
+
+        <div class="pr-setup-group">
+          <div class="pr-setup-label">Category</div>
+          <div class="pr-category-grid" id="prCategoryGrid"></div>
+        </div>
+
+        <div class="pr-setup-group" id="prRoleplayGroup" style="display:none">
+          <div class="pr-setup-label">Roleplay Scenario</div>
+          <input type="text" id="prRoleplayInput" class="pr-text-input" placeholder="e.g. Ordering coffee at a café in Seoul">
+        </div>
+
+        <div class="pr-setup-group">
+          <div class="pr-setup-label">Difficulty</div>
+          <div class="pr-difficulty-row" id="prDifficultyRow"></div>
+        </div>
+
+        <button type="button" class="pr-start-btn" id="prStartBtn">Start Conversation</button>
+        <p class="pr-setup-hint" id="prSetupHint"></p>
+      </div>
+    </section>
+
+    <!-- CONVERSATION (shown during a session) -->
+    <section class="pr-convo" id="prConvo" style="display:none">
+      <div class="pr-convo-header">
+        <div class="pr-convo-meta">
+          <span class="pr-convo-cat" id="prConvoCat"></span>
+          <span class="pr-convo-diff" id="prConvoDiff"></span>
+        </div>
+        <button type="button" class="pr-end-btn" id="prEndBtn">End Session</button>
+      </div>
+
+      <div class="pr-messages" id="prMessages" aria-live="polite"></div>
+
+      <div class="pr-thinking" id="prThinking" style="display:none">
+        <span class="pr-thinking-dot"></span><span class="pr-thinking-dot"></span><span class="pr-thinking-dot"></span>
+        AI is thinking…
+      </div>
+
+      <div class="pr-composer">
+        <div class="pr-composer-toolbar">
+          <button type="button" class="pr-tool-btn" id="prHintBtn">💡 Hint</button>
+          <button type="button" class="pr-tool-btn" id="prMicBtn" style="display:none">🎤</button>
+        </div>
+        <div class="pr-composer-row">
+          <textarea id="prInput" class="pr-input" rows="1" placeholder="한국어로 입력하세요…" aria-label="Type your Korean message"></textarea>
+          <button type="button" class="pr-send-btn" id="prSendBtn" aria-label="Send">↑</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SETTINGS / MISTAKE BANK / HISTORY DRAWER -->
+  <div class="pr-drawer-backdrop" id="prDrawerBackdrop"></div>
+  <aside class="pr-drawer" id="prDrawer" aria-label="Practice settings">
+    <div class="pr-drawer-header">
+      <div class="pr-drawer-tabs" id="prDrawerTabs">
+        <button class="pr-drawer-tab active" data-tab="ai">AI</button>
+        <button class="pr-drawer-tab" data-tab="conversation">Chat</button>
+        <button class="pr-drawer-tab" data-tab="learning">Learning</button>
+        <button class="pr-drawer-tab" data-tab="mistakes">Mistakes</button>
+        <button class="pr-drawer-tab" data-tab="history">History</button>
+        <button class="pr-drawer-tab" data-tab="privacy">Privacy</button>
+      </div>
+      <button type="button" class="pr-drawer-close" id="prDrawerClose" aria-label="Close">✕</button>
+    </div>
+
+    <div class="pr-drawer-body">
+
+      <!-- AI SETTINGS -->
+      <div class="pr-panel active" data-panel="ai">
+        <p class="pr-panel-note">Your API key is stored only in this browser's local storage and is sent directly to the Base URL below. This app runs fully client-side, so no backend proxy hides it — avoid using a key with broad account permissions here.</p>
+
+        <label class="pr-field">
+          <span>Provider</span>
+          <select id="prProvider">
+            <option value="openai-compatible">Custom / OpenAI-compatible API</option>
+          </select>
+        </label>
+        <label class="pr-field">
+          <span>API Base URL</span>
+          <input type="text" id="prBaseUrl" placeholder="https://api.openai.com/v1">
+        </label>
+        <label class="pr-field">
+          <span>API Key</span>
+          <input type="password" id="prApiKey" placeholder="sk-…" autocomplete="off">
+        </label>
+        <label class="pr-field">
+          <span>Model</span>
+          <input type="text" id="prModel" placeholder="gpt-4o-mini">
+        </label>
+        <label class="pr-field">
+          <span>Temperature <span id="prTempVal">0.8</span></span>
+          <input type="range" id="prTemperature" min="0" max="1.5" step="0.1" value="0.8">
+        </label>
+        <label class="pr-field">
+          <span>Max Tokens</span>
+          <input type="number" id="prMaxTokens" min="60" max="2000" step="20" value="400">
+        </label>
+        <label class="pr-field">
+          <span>System Instructions (optional, added to the tutor prompt)</span>
+          <textarea id="prSystemInstructions" rows="3" placeholder="e.g. Focus extra attention on my use of honorifics."></textarea>
+        </label>
+
+        <div class="pr-field-row">
+          <button type="button" class="pr-btn-secondary" id="prTestBtn">Test Connection</button>
+          <button type="button" class="pr-btn-primary" id="prSaveAIBtn">Save</button>
+        </div>
+        <div class="pr-test-result" id="prTestResult"></div>
+      </div>
+
+      <!-- CONVERSATION SETTINGS -->
+      <div class="pr-panel" data-panel="conversation">
+        <label class="pr-field">
+          <span>Response length</span>
+          <select id="prResponseLength">
+            <option value="short">Short</option>
+            <option value="medium" selected>Medium</option>
+            <option value="long">Long</option>
+          </select>
+        </label>
+        <label class="pr-toggle-field">
+          <span>Korean-only mode</span>
+          <input type="checkbox" id="prKoreanOnly" checked>
+        </label>
+        <label class="pr-toggle-field">
+          <span>Show corrections automatically</span>
+          <input type="checkbox" id="prAutoCorrect" checked>
+        </label>
+        <p class="pr-panel-note">Change category or difficulty by ending the current session and starting a new one.</p>
+      </div>
+
+      <!-- LEARNING SETTINGS -->
+      <div class="pr-panel" data-panel="learning">
+        <label class="pr-toggle-field">
+          <span>Romanization</span>
+          <input type="checkbox" id="prRomanization">
+        </label>
+        <label class="pr-toggle-field">
+          <span>Auto-show translation under AI messages</span>
+          <input type="checkbox" id="prAutoTranslate">
+        </label>
+        <label class="pr-toggle-field">
+          <span>Audio (Korean TTS)</span>
+          <input type="checkbox" id="prAudioEnabled" checked>
+        </label>
+        <label class="pr-toggle-field">
+          <span>Autoplay AI replies</span>
+          <input type="checkbox" id="prAutoplay">
+        </label>
+        <label class="pr-field">
+          <span>Hint behavior</span>
+          <select id="prHintBehavior">
+            <option value="progressive" selected>Progressive (conceptual → structure → partial sentence)</option>
+            <option value="direct">Direct (show best full answer immediately)</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- MISTAKE BANK -->
+      <div class="pr-panel" data-panel="mistakes">
+        <input type="text" id="prMistakeSearch" class="pr-text-input" placeholder="Search mistakes…" style="margin-bottom:12px">
+        <div class="pr-mistake-list" id="prMistakeList"></div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="pr-panel" data-panel="history">
+        <div class="pr-history-list" id="prHistoryList"></div>
+      </div>
+
+      <!-- PRIVACY -->
+      <div class="pr-panel" data-panel="privacy">
+        <button type="button" class="pr-btn-secondary pr-danger" id="prClearConvoBtn">Clear current conversation</button>
+        <button type="button" class="pr-btn-secondary pr-danger" id="prClearHistoryBtn">Clear practice history</button>
+        <button type="button" class="pr-btn-secondary pr-danger" id="prClearMistakesBtn">Clear saved mistakes</button>
+        <button type="button" class="pr-btn-secondary pr-danger" id="prClearVocabBtn">Clear saved vocabulary</button>
+        <button type="button" class="pr-btn-secondary pr-danger" id="prClearApiBtn">Remove stored API configuration</button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- SESSION REPORT MODAL -->
+  <div class="pr-modal-backdrop" id="prReportBackdrop">
+    <div class="pr-modal" id="prReportModal" role="dialog" aria-label="Session report">
+      <div class="pr-modal-header">
+        <h2>Session Report</h2>
+        <button type="button" class="pr-drawer-close" id="prReportClose" aria-label="Close">✕</button>
+      </div>
+      <div class="pr-modal-body" id="prReportBody"></div>
+      <div class="pr-modal-footer">
+        <div class="pr-pdf-options" id="prPdfOptions"></div>
+        <div class="pr-field-row">
+          <button type="button" class="pr-btn-secondary" id="prPracticeAgainBtn">Practice Again</button>
+          <button type="button" class="pr-btn-primary" id="prDownloadPdfBtn">Download Study PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/hangulUtils.js"></script>
+  <script src="js/practiceStorage.js"></script>
+  <script src="js/aiProvider.js"></script>
+  <script src="js/conversationService.js"></script>
+  <script src="js/ttsService.js"></script>
+  <script src="js/pdfExport.js"></script>
+  <script src="js/practiceApp.js"></script>
+</body>
+</html>
