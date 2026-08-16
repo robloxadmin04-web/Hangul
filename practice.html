@@ -80,11 +80,13 @@
         <div class="pr-composer-toolbar">
           <button type="button" class="pr-tool-btn" id="prHintBtn">💡 Hint</button>
           <button type="button" class="pr-tool-btn" id="prMicBtn" style="display:none">🎤</button>
+          <button type="button" class="pr-tool-btn" id="prKbdToggleBtn" aria-pressed="false">한글 Keyboard</button>
         </div>
         <div class="pr-composer-row">
           <textarea id="prInput" class="pr-input" rows="1" placeholder="한국어로 입력하세요…" aria-label="Type your Korean message"></textarea>
           <button type="button" class="pr-send-btn" id="prSendBtn" aria-label="Send">↑</button>
         </div>
+        <div class="pr-hangul-kbd" id="prHangulKbd" hidden></div>
       </div>
     </section>
 
@@ -275,6 +277,7 @@
   </div>
 
   <script src="hangulUtils.js"></script>
+  <script src="hangulKeyboard.js"></script>
   <script src="practiceStorage.js"></script>
   <script src="aiProvider.js"></script>
   <script src="conversationService.js"></script>
