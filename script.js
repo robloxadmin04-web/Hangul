@@ -353,6 +353,7 @@ const WORD_ORDER_EXERCISES = [
    ============================================================ */
 
 let currentSection = 'overview';
+const SECTION_STORAGE_KEY = 'koreanLearning_lastSection';
 
 function navigateTo(sectionId) {
   // Hide all sections
@@ -371,6 +372,7 @@ function navigateTo(sectionId) {
   });
 
   currentSection = sectionId;
+  try { window.localStorage.setItem(SECTION_STORAGE_KEY, sectionId); } catch (e) { /* storage unavailable — section just won't persist */ }
 
   // Scroll main to top
   const main = document.getElementById('main');
@@ -3417,4 +3419,12 @@ document.addEventListener('DOMContentLoaded', function() {
   updateSidebarLevel();
   renderSkillMastery();
   renderOverviewProgress();
+
+  // Restore whichever section the user was last on, instead of always resetting to Overview.
+  const validSections = ['overview','hangul','reading','vocabulary','grammar','lessons','builder','practice','review'];
+  let savedSection = null;
+  try { savedSection = window.localStorage.getItem(SECTION_STORAGE_KEY); } catch (e) {}
+  if (savedSection && validSections.includes(savedSection) && savedSection !== 'overview') {
+    navigateTo(savedSection);
+  }
 });
