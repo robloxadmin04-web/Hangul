@@ -109,38 +109,74 @@
 
       <!-- AI SETTINGS -->
       <div class="pr-panel active" data-panel="ai">
-        <p class="pr-panel-note">Your API key is stored only in this browser's local storage and is sent directly to the Base URL below. This app runs fully client-side, so no backend proxy hides it — avoid using a key with broad account permissions here.</p>
 
-        <label class="pr-field">
-          <span>Provider</span>
-          <select id="prProvider">
-            <option value="openai-compatible">Custom / OpenAI-compatible API</option>
-          </select>
-        </label>
-        <label class="pr-field">
-          <span>API Base URL</span>
-          <input type="text" id="prBaseUrl" placeholder="https://api.openai.com/v1">
-        </label>
-        <label class="pr-field">
-          <span>API Key</span>
-          <input type="password" id="prApiKey" placeholder="sk-…" autocomplete="off">
-        </label>
-        <label class="pr-field">
-          <span>Model</span>
-          <input type="text" id="prModel" placeholder="gpt-4o-mini">
-        </label>
-        <label class="pr-field">
-          <span>Temperature <span id="prTempVal">0.8</span></span>
-          <input type="range" id="prTemperature" min="0" max="1.5" step="0.1" value="0.8">
-        </label>
-        <label class="pr-field">
-          <span>Max Tokens</span>
-          <input type="number" id="prMaxTokens" min="60" max="2000" step="20" value="400">
-        </label>
-        <label class="pr-field">
-          <span>System Instructions (optional, added to the tutor prompt)</span>
-          <textarea id="prSystemInstructions" rows="3" placeholder="e.g. Focus extra attention on my use of honorifics."></textarea>
-        </label>
+        <details class="pr-section" open>
+          <summary>AI Provider</summary>
+          <div class="pr-section-body">
+            <p class="pr-panel-note">Free providers only — the model list below is filtered to each provider's free tier. Free access may have rate limits or daily usage limits depending on the provider.</p>
+
+            <label class="pr-field">
+              <span>Provider</span>
+              <select id="prProvider">
+                <!-- populated from AIProvider.getFreeProviders() -->
+              </select>
+            </label>
+            <div class="pr-provider-status" id="prProviderStatus"></div>
+          </div>
+        </details>
+
+        <details class="pr-section" open>
+          <summary>API Configuration</summary>
+          <div class="pr-section-body">
+            <label class="pr-field">
+              <span>API Key</span>
+              <input type="password" id="prApiKey" placeholder="Paste your provider API key" autocomplete="off">
+            </label>
+            <label class="pr-field">
+              <span>Model</span>
+              <select id="prModel"></select>
+            </label>
+          </div>
+        </details>
+
+        <details class="pr-section">
+          <summary>Generation</summary>
+          <div class="pr-section-body">
+            <label class="pr-field">
+              <span>Temperature <span id="prTempVal">0.8</span></span>
+              <input type="range" id="prTemperature" min="0" max="1.5" step="0.1" value="0.8">
+            </label>
+            <label class="pr-field">
+              <span>Max Tokens</span>
+              <input type="number" id="prMaxTokens" min="60" max="2000" step="20" value="400">
+            </label>
+          </div>
+        </details>
+
+        <details class="pr-section">
+          <summary>Advanced</summary>
+          <div class="pr-section-body">
+            <label class="pr-field">
+              <span>System Instructions (optional, added to the tutor prompt)</span>
+              <textarea id="prSystemInstructions" rows="3" placeholder="e.g. Focus extra attention on my use of honorifics."></textarea>
+            </label>
+            <label class="pr-checkbox">
+              <input type="checkbox" id="prUseCustomProvider">
+              <span>Use a custom provider instead (Custom Provider — not verified as free)</span>
+            </label>
+            <label class="pr-field pr-custom-only" id="prCustomBaseUrlField" hidden>
+              <span>API Base URL</span>
+              <input type="text" id="prBaseUrl" placeholder="https://your-provider.example.com/v1">
+            </label>
+            <label class="pr-field pr-custom-only" id="prCustomModelField" hidden>
+              <span>Custom Model Name</span>
+              <input type="text" id="prCustomModel" placeholder="model-name">
+            </label>
+            <p class="pr-panel-note pr-custom-only" id="prCustomWarning" hidden>This app cannot verify whether a custom provider or model is free. You are responsible for confirming pricing with that provider before use.</p>
+          </div>
+        </details>
+
+        <p class="pr-panel-note">Your API key is stored only in this browser's local storage and is sent directly to the selected provider. This app runs fully client-side, so no backend proxy hides it — do not use a key with permissions you don't want exposed in the browser.</p>
 
         <div class="pr-field-row">
           <button type="button" class="pr-btn-secondary" id="prTestBtn">Test Connection</button>
