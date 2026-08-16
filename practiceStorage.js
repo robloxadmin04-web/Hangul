@@ -37,7 +37,7 @@ const PracticeStorage = (function () {
   /* ---------- AI Config ---------- */
   function getAIConfig() {
     return safeGet(KEYS.aiConfig, {
-      provider: 'openai-compatible',
+      provider: 'groq',
       baseUrl: '',
       apiKey: '',
       model: '',
