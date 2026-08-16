@@ -286,6 +286,26 @@
 
     $('prHintBtn').addEventListener('click', requestHint);
     $('prEndBtn').addEventListener('click', endSession);
+
+    wireHangulKeyboard(input);
+  }
+
+  function wireHangulKeyboard(input) {
+    const toggleBtn = $('prKbdToggleBtn');
+    const panel = $('prHangulKbd');
+    const kbd = HangulKeyboard.attach({
+      input: input,
+      container: panel,
+      onToggle: function (isOpen) {
+        toggleBtn.classList.toggle('active', isOpen);
+        toggleBtn.setAttribute('aria-pressed', isOpen ? 'true' : 'false');
+        autosizeTextarea(input);
+      }
+    });
+    toggleBtn.addEventListener('click', function () {
+      kbd.toggle();
+      if (kbd.isVisible()) input.focus();
+    });
   }
 
   function autosizeTextarea(ta) {
