@@ -211,6 +211,35 @@ body.practice-body {
 .pr-test-result.ok { display: block; color: var(--accent); background: rgba(74,124,89,0.1); }
 .pr-test-result.err { display: block; color: var(--error); background: rgba(138,58,58,0.1); }
 
+/* Collapsible AI-settings sections (mobile-friendly grouping) */
+.pr-section { border: 1px solid var(--border-light); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+.pr-section summary {
+  list-style: none; cursor: pointer; padding: 12px 14px; font-size: 12.5px;
+  font-weight: 600; color: var(--text); display: flex; align-items: center;
+  justify-content: space-between; min-height: 44px; box-sizing: border-box;
+}
+.pr-section summary::-webkit-details-marker { display: none; }
+.pr-section summary::after { content: '›'; transform: rotate(90deg); transition: transform 0.15s; color: var(--text-dim); font-size: 16px; }
+.pr-section[open] summary::after { transform: rotate(-90deg); }
+.pr-section-body { padding: 4px 14px 14px; }
+
+.pr-checkbox { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px; min-height: 22px; }
+.pr-checkbox input { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; }
+
+.pr-provider-status { margin-top: 8px; }
+.pr-badge {
+  display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px;
+  border-radius: 999px; margin-bottom: 8px;
+}
+.pr-badge-free { color: var(--accent); background: rgba(74,124,89,0.15); }
+.pr-badge-warn { color: var(--error); background: rgba(138,58,58,0.15); }
+.pr-provider-note { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin: 0 0 8px; }
+
+/* Ensure controls stay comfortably tappable and never overflow on mobile */
+.pr-field select, .pr-field input, .pr-field textarea { width: 100%; box-sizing: border-box; min-height: 40px; }
+.pr-field input[type="range"] { min-height: 24px; padding: 0; }
+.pr-btn-primary, .pr-btn-secondary { min-height: 44px; }
+
 .pr-mistake-list, .pr-history-list { display: flex; flex-direction: column; gap: 8px; }
 .pr-mistake-item, .pr-history-item {
   border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 12.5px;
