@@ -120,7 +120,9 @@
 
   function startSession() {
     if (!state.category) { showSetupHint('Choose a conversation category first.'); return; }
-    if (!state.aiConfig.baseUrl || !state.aiConfig.model) {
+    const cfg = state.aiConfig;
+    const hasEndpoint = (cfg.provider && cfg.provider !== 'custom') || !!cfg.baseUrl;
+    if (!hasEndpoint || !cfg.model || !cfg.apiKey) {
       showSetupHint('Configure your AI provider in Settings (⚙) before starting.');
       openDrawer('ai');
       return;
@@ -385,49 +387,151 @@
   }
 
   /* ================= AI SETTINGS FORM ================= */
+  const FREE_PROVIDERS = AIProvider.getFreeProviders();
+
+  function populateProviderSelect() {
+    const sel = $('prProvider');
+    sel.innerHTML = '';
+    FREE_PROVIDERS.forEach(function (p) {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name + ' — ' + p.badge;
+      sel.appendChild(opt);
+    });
+  }
+
+  function populateModelSelect(providerId) {
+    const modelSel = $('prModel');
+    modelSel.innerHTML = '';
+    const provider = AIProvider.getProvider(providerId);
+    if (!provider) return;
+    provider.models.forEach(function (m) {
+      const opt = document.createElement('option');
+      opt.value = m.id;
+      opt.textContent = m.label;
+      modelSel.appendChild(opt);
+    });
+  }
+
+  function isUsingCustomProvider() {
+    return $('prUseCustomProvider').checked;
+  }
+
+  function toggleCustomProviderFields() {
+    const useCustom = isUsingCustomProvider();
+    document.querySelectorAll('.pr-custom-only').forEach(el => { el.hidden = !useCustom; });
+    $('prProvider').closest('.pr-section').style.opacity = useCustom ? '0.5' : '';
+    $('prProvider').disabled = useCustom;
+    $('prModel').disabled = useCustom;
+    renderProviderStatus();
+  }
+
+  function renderProviderStatus() {
+    const box = $('prProviderStatus');
+    if (isUsingCustomProvider()) {
+      box.innerHTML = '<span class="pr-badge pr-badge-warn">Custom Provider — not verified as free</span>';
+      return;
+    }
+    const provider = AIProvider.getProvider($('prProvider').value);
+    if (!provider) { box.innerHTML = ''; return; }
+    box.innerHTML =
+      '<span class="pr-badge pr-badge-free">' + provider.badge + '</span>' +
+      '<p class="pr-provider-note">' + provider.note + '</p>' +
+      '<p class="pr-panel-note">Free access may have rate limits or daily usage limits depending on the provider.</p>';
+  }
+
   function loadAIConfigIntoForm() {
     const c = state.aiConfig;
+    const useCustom = !c.provider || c.provider === 'custom' || c.provider === 'openai-compatible';
+
+    populateProviderSelect();
+    $('prUseCustomProvider').checked = useCustom;
+
+    if (!useCustom) {
+      $('prProvider').value = c.provider;
+      populateModelSelect(c.provider);
+      if (c.model) $('prModel').value = c.model;
+    } else {
+      // Keep a sensible free provider preselected underneath so the
+      // learner can uncheck "custom" and land on a real free option.
+      $('prProvider').value = FREE_PROVIDERS[0] ? FREE_PROVIDERS[0].id : '';
+      populateModelSelect($('prProvider').value);
+    }
+
     $('prBaseUrl').value = c.baseUrl || '';
+    $('prCustomModel').value = useCustom ? (c.model || '') : '';
     $('prApiKey').value = c.apiKey || '';
-    $('prModel').value = c.model || '';
     $('prTemperature').value = c.temperature != null ? c.temperature : 0.8;
     $('prTempVal').textContent = $('prTemperature').value;
     $('prMaxTokens').value = c.maxTokens || 400;
     $('prSystemInstructions').value = c.systemInstructions || '';
+
+    toggleCustomProviderFields();
   }
 
-  function wireAIForm() {
-    $('prTemperature').addEventListener('input', function () { $('prTempVal').textContent = this.value; });
-    $('prSaveAIBtn').addEventListener('click', function () {
-      state.aiConfig = {
-        provider: 'openai-compatible',
+  function readAIConfigFromForm() {
+    const useCustom = isUsingCustomProvider();
+    if (useCustom) {
+      return {
+        provider: 'custom',
         baseUrl: $('prBaseUrl').value.trim(),
         apiKey: $('prApiKey').value,
-        model: $('prModel').value.trim(),
+        model: $('prCustomModel').value.trim(),
         temperature: parseFloat($('prTemperature').value),
         maxTokens: parseInt($('prMaxTokens').value, 10) || 400,
         systemInstructions: $('prSystemInstructions').value.trim()
       };
+    }
+    return {
+      provider: $('prProvider').value,
+      baseUrl: '', // resolved from the provider catalog, never hand-entered
+      apiKey: $('prApiKey').value,
+      model: $('prModel').value,
+      temperature: parseFloat($('prTemperature').value),
+      maxTokens: parseInt($('prMaxTokens').value, 10) || 400,
+      systemInstructions: $('prSystemInstructions').value.trim()
+    };
+  }
+
+  function wireAIForm() {
+    $('prTemperature').addEventListener('input', function () { $('prTempVal').textContent = this.value; });
+    $('prProvider').addEventListener('change', function () {
+      populateModelSelect(this.value);
+      renderProviderStatus();
+    });
+    $('prUseCustomProvider').addEventListener('change', toggleCustomProviderFields);
+
+    $('prSaveAIBtn').addEventListener('click', function () {
+      state.aiConfig = readAIConfigFromForm();
       PracticeStorage.setAIConfig(state.aiConfig);
       updateStatusPill();
       const r = $('prTestResult');
-      r.className = 'pr-test-result ok'; r.textContent = 'Saved.';
-      setTimeout(() => { r.className = 'pr-test-result'; }, 1800);
+      r.className = 'pr-test-result ok'; r.textContent = 'Saved.'; r.style.display = 'block';
+      setTimeout(() => { r.className = 'pr-test-result'; r.style.display = 'none'; }, 1800);
     });
     $('prTestBtn').addEventListener('click', async function () {
-      const cfg = {
-        baseUrl: $('prBaseUrl').value.trim(),
-        apiKey: $('prApiKey').value,
-        model: $('prModel').value.trim(),
-        temperature: parseFloat($('prTemperature').value),
-        maxTokens: parseInt($('prMaxTokens').value, 10) || 400
-      };
+      const cfg = readAIConfigFromForm();
       const r = $('prTestResult');
       r.className = 'pr-test-result'; r.textContent = 'Testing…'; r.style.display = 'block';
+
+      if (!cfg.apiKey) {
+        r.className = 'pr-test-result err'; r.textContent = 'Invalid API key.';
+        setConnectionStatus('error');
+        return;
+      }
+      if (!cfg.model) {
+        r.className = 'pr-test-result err'; r.textContent = 'Model unavailable.';
+        setConnectionStatus('error');
+        return;
+      }
+
       const result = await AIProvider.testConnection(cfg);
       if (result.ok) {
         r.className = 'pr-test-result ok';
-        r.textContent = 'Connection successful\nModel: ' + result.model + '\nResponse time: ' + result.elapsedMs + 'ms';
+        const providerName = cfg.provider === 'custom' ? 'Custom Provider' : (AIProvider.getProvider(cfg.provider) || {}).name || cfg.provider;
+        r.textContent =
+          'Connection successful\nProvider: ' + providerName + '\nModel: ' + result.model +
+          (result.freeTier ? '\nFree tier configuration detected.' : '\nCustom provider — free tier not verified.');
         setConnectionStatus('connected');
       } else {
         r.className = 'pr-test-result err';
@@ -439,7 +543,8 @@
 
   function updateStatusPill() {
     const c = state.aiConfig;
-    if (!c.baseUrl || !c.model) setConnectionStatus('unconfigured');
+    const hasEndpoint = (c.provider && c.provider !== 'custom') || !!c.baseUrl;
+    if (!hasEndpoint || !c.model || !c.apiKey) setConnectionStatus('unconfigured');
     else setConnectionStatus('configured');
   }
   function setConnectionStatus(kind) {
