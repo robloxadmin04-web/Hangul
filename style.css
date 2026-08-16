@@ -1836,3 +1836,9 @@ body.rom-off .rom-text {
 .rom-toggle.rom-toggle-immersion { opacity: 0.4; }
 .rom-toggle.rom-toggle-immersion:hover,
 .rom-toggle.rom-toggle-deemphasized:hover { opacity: 1; }
+
+/* --- PRACTICE nav badge (added) -------------------------------- */
+.nav-badge-ai{
+  font-size:9px; letter-spacing:0.05em; color:var(--accent);
+  border:1px solid var(--accent); border-radius:8px; padding:1px 5px; margin-left:6px;
+}
